@@ -20,7 +20,7 @@ Geometry::Geometry() noexcept
         , tank_dims_   {  20,  20 }
         , board_margin_  {20}
         , wall_thickness_ {20}
-        , board_size {5, 5}
+        , board_size {5, 10}
         , start {board_margin_, board_margin_}
         , end {scene_dims.width - board_margin_, scene_dims.height - board_margin_ - score_height}
         , score_height {100}

@@ -98,14 +98,14 @@ std::vector<ge211::Position> Virtual_Board::get_unvisited_neighbors_(const ge211
     for (int i = -1; i < 2; i = i + 2){
         int x_new = x_pos + i;
         int y_new = y_pos;
-        if (x_new >= 0 && x_new < height_ && y_new >= 0 && y_new < width_ && !(get_square_given_pos_({x_new,y_new})->visited)) {
+        if (x_new >= 0 && x_new < width_ && y_new >= 0 && y_new < height_ && !(get_square_given_pos_({x_new,y_new})->visited)) {
             neighbors.push_back(ge211::Position{x_new, y_new});
         }
     }
     for (int j = -1; j < 2; j = j + 2){
         int x_new = x_pos;
         int y_new = y_pos + j;
-        if (x_new >= 0 && x_new < height_ && y_new >= 0 && y_new < width_ && !(get_square_given_pos_({x_new,y_new})->visited)) {
+        if (x_new >= 0 && x_new < width_ && y_new >= 0 && y_new < height_ && !(get_square_given_pos_({x_new,y_new})->visited)) {
             neighbors.push_back(ge211::Position{x_new, y_new});
         }
     }
