@@ -7,7 +7,8 @@ include(.cs211/cmake/CMakeLists.txt)
 set(MODEL_COMMON
         src/geometry.cxx
         src/ball.cxx
-        src/model.cxx)
+        src/model.cxx
+        src/virtual_board.cxx)
 
 # Adds a program named `brick_out` built from src/brick_out.cxx and
 # the common model files.
@@ -23,6 +24,11 @@ add_test_program(ball_test
         test/ball_test.cxx
         ${MODEL_COMMON})
 target_link_libraries(ball_test ge211)
+
+add_test_program(virtual_board_test
+        test/virtual_board_test.cxx
+        ${MODEL_COMMON})
+target_link_libraries(virtual_board_test ge211)
 
 # Adds a test program named `model_test` built from test/model_test.cxx
 # and the common model files.

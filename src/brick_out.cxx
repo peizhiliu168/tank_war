@@ -1,4 +1,4 @@
-r// IT'S OKAY TO CHANGE THIS FILE, BUT YOU DON'T HAVE TO.
+// IT'S OKAY TO CHANGE THIS FILE, BUT YOU DON'T HAVE TO.
 
 #include "ui.hxx"
 #include <ge211.hxx>
