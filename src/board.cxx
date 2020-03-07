@@ -44,8 +44,6 @@ bool Board::is_touching(const ge211::Rectangle object, const ge211::Rectangle wa
 
     return true;
 
-
-    return false;
 }
 
 ///////////////////Private////////////////////////
