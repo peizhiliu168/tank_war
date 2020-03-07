@@ -3,6 +3,6 @@
 
 TEST_CASE("create virtual board")
 {
-    Virtual_Board v_board{15,15};
+    Virtual_Board v_board{5, 5};
 
 }

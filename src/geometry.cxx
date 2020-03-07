@@ -18,7 +18,13 @@ Geometry::Geometry() noexcept
         , brick_spacing  {   10,   5 }
         , scene_dims     { 1024, 768 }
         , tank_dims_   {  20,  20 }
-{ }
+        , board_margin_  {20}
+        , wall_thickness_ {20}
+        , board_size {5, 5}
+        , start {board_margin_, board_margin_}
+        , end {scene_dims.width - board_margin_, scene_dims.height - board_margin_ - score_height}
+        , score_height {100}
+{}
 
 ge211::Position Geometry::tank_top_left1() const noexcept
 {
@@ -54,4 +60,24 @@ ge211::Dimensions Geometry::brick_dims() const noexcept
     return {width, height};
 }
 
+ge211::Dimensions Geometry::square_dim() const noexcept
+{
+    int width = ((end.x - start.x) - ((board_size.width + 1) * wall_thickness_)) / board_size.width;
+    int height = ((end.y - start.y) - ((board_size.height + 1) * wall_thickness_)) / board_size.height;
+    return {width, height};
+}
+
+ge211::Dimensions Geometry::v_wall_dim() const noexcept
+{
+    int width = wall_thickness_;
+    int height = square_dim().height + 2 * wall_thickness_;
+    return {width, height};
+}
+
+ge211::Dimensions Geometry::h_wall_dim() const noexcept
+{
+    int width = square_dim().width + 2 * wall_thickness_;
+    int height = wall_thickness_;
+    return {width, height};
+}
 

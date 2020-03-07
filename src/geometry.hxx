@@ -60,6 +60,18 @@ struct Geometry
     // Number of pixels from bottom of screen to bottom of paddle.
     int bottom_margin;
 
+    int board_margin_;
+
+    int wall_thickness_;
+
+    int score_height;
+
+    ge211::Dimensions board_size;
+
+    ge211::Position start;
+
+    ge211::Position end;
+
     // The initial position of the paddle. This is a member function because
     // it's computed from the other properties.
     ge211::Position tank_top_left1() const noexcept;
@@ -71,5 +83,11 @@ struct Geometry
     //  - brick_cols > 0
     //  - brick_rows > 0
     ge211::Dimensions brick_dims() const noexcept;
+
+    ge211::Dimensions h_wall_dim() const noexcept;
+
+    ge211::Dimensions v_wall_dim() const noexcept;
+
+    ge211::Dimensions square_dim() const noexcept;
 };
 

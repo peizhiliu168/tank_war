@@ -17,8 +17,9 @@ Virtual_Board::Virtual_Board(int width, int height) {
 
 void Virtual_Board::vb_create() {
     recur_backtrack_();
-}
+    remove_duplicate_edges();
 
+}
 square Virtual_Board::get_square_given_pos(ge211::Position pos) const{
     for (int i = 0; i < vb_.size(); i++){
         if (vb_[i].pos == pos){
@@ -53,18 +54,26 @@ void Virtual_Board::recur_backtrack_() {
             if (x_diff == 0){
                 if(y_diff == 1){
                     square* next_square = get_square_given_pos_(next_pos);
-                    next_square->side_pres[2] = true;
+                    square* curr_square = get_square_given_pos_(curr_pos);
+                    next_square->side_pres[0] = false;
+                    curr_square->side_pres[2] = false;
                 } else{
                     square* next_square = get_square_given_pos_(next_pos);
-                    next_square->side_pres[0] = true;
+                    square* curr_square = get_square_given_pos_(curr_pos);
+                    next_square->side_pres[2] = false;
+                    curr_square->side_pres[0] = false;
                 }
             } else{
                 if(x_diff == 1){
                     square* next_square = get_square_given_pos_(next_pos);
-                    next_square->side_pres[1] = true;
+                    square* curr_square = get_square_given_pos_(curr_pos);
+                    next_square->side_pres[3] = false;
+                    curr_square->side_pres[1] = false;
                 } else{
                     square* next_square = get_square_given_pos_(next_pos);
-                    next_square->side_pres[3] = true;
+                    square* curr_square = get_square_given_pos_(curr_pos);
+                    next_square->side_pres[1] = false;
+                    curr_square->side_pres[3] = false;
                 }
             }
 
@@ -113,7 +122,41 @@ square* Virtual_Board::get_square_given_pos_(ge211::Position pos) {
     return nullptr;
 }
 
-
+void Virtual_Board::remove_duplicate_edges(){
+    for (int i = 0; i < width_; ++i) {
+        for (int j = 0; j < height_; ++j) {
+            square* curr_square = get_square_given_pos_({i,j});
+            bool top = curr_square->side_pres[0];
+            bool right = curr_square->side_pres[1];
+            bool bot = curr_square->side_pres[2];
+            bool left = curr_square->side_pres[3];
+            if (top){
+                square* adj_square = get_square_given_pos_({i,j - 1});
+                if (adj_square){
+                    adj_square->side_pres[2] = false;
+                }
+            }
+            if (right){
+                square* adj_square = get_square_given_pos_({i + 1,j});
+                if (adj_square){
+                    adj_square->side_pres[3] = false;
+                }
+            }
+            if (bot){
+                square* adj_square = get_square_given_pos_({i,j + 1});
+                if (adj_square){
+                    adj_square->side_pres[0] = false;
+                }
+            }
+            if (left){
+                square* adj_square = get_square_given_pos_({i - 1,j});
+                if (adj_square){
+                    adj_square->side_pres[1] = false;
+                }
+            }
+        }
+    }
+}
 
 
 

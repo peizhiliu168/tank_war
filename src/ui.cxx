@@ -2,6 +2,7 @@
 
 #include "ui.hxx"
 
+
 ///
 /// VIEW CONSTANTS
 ///
@@ -21,7 +22,8 @@ ge211::Color const brick_color   {100, 100, 100};
 // in the constructor body and must be initialized in a member
 // initializer list.
 Ui::Ui(Model& model)
-        : model_(model)
+        : model_(model),
+        board_(model_.geometry_.board_size.width, model_.geometry_.board_size.height)
 { }
 
 ge211::Dimensions Ui::initial_window_dimensions() const
@@ -31,6 +33,8 @@ ge211::Dimensions Ui::initial_window_dimensions() const
 
 void Ui::draw(ge211::Sprite_set& sprites)
 {
+
+
     // TODO: your code here
     sprites.add_sprite(tank_sprite_, model_.tank1_.top_left());
     sprites.add_sprite(tank_sprite_, model_.tank2_.top_left());
@@ -39,6 +43,15 @@ void Ui::draw(ge211::Sprite_set& sprites)
     //for (int i = 0; i<model_.bricks_.size(); i++){
         //sprites.add_sprite(brick_sprite_, model_.bricks_[i].top_left());
     //}
+    std::vector<ge211::Rectangle> walls = board_.get_walls();
+    for (int i = 0; i < walls.size(); i++){
+        if (walls[i].dimensions().height == model_.geometry_.wall_thickness_){
+            sprites.add_sprite(h_wall_, walls[i].top_left());
+        } else{
+            sprites.add_sprite(v_wall_, walls[i].top_left());
+        }
+    }
+
 }
 
 ///
