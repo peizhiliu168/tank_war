@@ -1,4 +1,3 @@
-#include <iostream>
 #include "virtual_board.hxx"
 
 //////////////////////////Public/////////////////////////////////
@@ -20,12 +19,13 @@ void Virtual_Board::vb_create() {
     recur_backtrack_();
 }
 
-square Virtual_Board::get_square_given_pos(ge211::Position pos){
+square Virtual_Board::get_square_given_pos(ge211::Position pos) const{
     for (int i = 0; i < vb_.size(); i++){
         if (vb_[i].pos == pos){
             return vb_[i];
         }
     }
+    return square{{-1, -1}, {},{}};
 }
 
 int Virtual_Board::height() {
@@ -110,7 +110,9 @@ square* Virtual_Board::get_square_given_pos_(ge211::Position pos) {
             return &(vb_[i]);
         }
     }
+    return nullptr;
 }
+
 
 
 

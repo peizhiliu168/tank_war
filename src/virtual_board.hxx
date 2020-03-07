@@ -26,7 +26,7 @@ public:
     int width();
 
     // returns the square given a specific position
-    square get_square_given_pos(ge211::Position pos);
+    square get_square_given_pos(ge211::Position pos) const;
 
 private:
     // function that uses recursive backtracking algorithm to generate
@@ -35,7 +35,7 @@ private:
 
     // helper function for recur_backtrack to get neighbors that haven't
     // been visited yet
-    std::vector<ge211::Position> get_unvisited_neighbors_(const ge211::Position);
+    std::vector<ge211::Position> get_unvisited_neighbors_(ge211::Position);
 
     // takes in a position and gives back the square struct that
     // corresponds to that position as a square pointer
