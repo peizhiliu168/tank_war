@@ -9,7 +9,8 @@ set(MODEL_COMMON
         src/ball.cxx
         src/model.cxx
         src/virtual_board.cxx
-        src/board.cxx)
+        src/board.cxx
+        src/player_score.cxx)
 
 # Adds a program named `brick_out` built from src/brick_out.cxx and
 # the common model files.

@@ -10,23 +10,10 @@ Model::Model(Geometry const& geometry)
                                       geometry_.tank_dims_))
         , ball_red_(tank1_, geometry_, geometry_.ball_red_velocity0)
         , ball_blue_(tank2_, geometry_, geometry_.ball_blue_velocity0)
-{
-    // TODO: your code here
-    //int left_space = geometry_.side_margin;
-    //int top_space = geometry_.top_margin;
-    //for(int i=0; i < geometry_.brick_rows; i++){
-        //for(int j=0; j < geometry_.brick_cols; j++){
-            //Block b(Block::from_top_left({left_space, top_space},
-                    //geometry_.brick_dims()));
-            //bricks_.push_back(b);
-            //left_space += geometry_.brick_spacing.width +
-                    //geometry_.brick_dims().width;
-        //}
-        //left_space = geometry_.side_margin;
-        //top_space += geometry_.brick_spacing.height +
-                //geometry_.brick_dims().height;
-    //}
-}
+        , first_score_()
+        , second_score_()
+        , board_(geometry_.board_size.width, geometry_.board_size.height)
+{}
 
 
 

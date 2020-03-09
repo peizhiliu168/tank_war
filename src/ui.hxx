@@ -8,7 +8,7 @@
 
 #include "model.hxx"
 #include <ge211.hxx>
-#include "board.hxx"
+#include <string>
 
 ///
 /// VIEW CONSTANTS
@@ -124,11 +124,19 @@ struct Ui : ge211::Abstract_game
     ge211::Rectangle_sprite const
             brick_sprite_   {model_.geometry_.brick_dims(), brick_color};
 
-    Board board_;
-
     ge211::Rectangle_sprite const
             v_wall_   {model_.geometry_.v_wall_dim(), brick_color};
 
     ge211::Rectangle_sprite const
             h_wall_   {model_.geometry_.h_wall_dim(), brick_color};
+
+    ge211::Rectangle_sprite const
+            first_score_board {model_.geometry_.score_board_size,
+                               ge211::Color::from_rgba(0,1,0,1)};
+
+    ge211::Rectangle_sprite const
+            second_score_board {model_.geometry_.score_board_size,
+                                ge211::Color::from_rgba(1,0,0,1)};
+
+    //ge211::sprites::Text_sprite(std::string const , )
 };

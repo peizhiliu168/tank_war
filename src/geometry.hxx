@@ -66,11 +66,18 @@ struct Geometry
 
     int score_height;
 
+    ge211::Dimensions score_board_size;
+
     ge211::Dimensions board_size;
 
     ge211::Position start;
 
     ge211::Position end;
+
+    ge211::Position first_board_pos;
+
+    ge211::Position second_board_pos;
+
 
     // The initial position of the paddle. This is a member function because
     // it's computed from the other properties.

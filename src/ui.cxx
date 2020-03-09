@@ -22,8 +22,7 @@ ge211::Color const brick_color   {100, 100, 100};
 // in the constructor body and must be initialized in a member
 // initializer list.
 Ui::Ui(Model& model)
-        : model_(model),
-        board_(model_.geometry_.board_size.width, model_.geometry_.board_size.height)
+        : model_(model)
 { }
 
 ge211::Dimensions Ui::initial_window_dimensions() const
@@ -43,7 +42,9 @@ void Ui::draw(ge211::Sprite_set& sprites)
     //for (int i = 0; i<model_.bricks_.size(); i++){
         //sprites.add_sprite(brick_sprite_, model_.bricks_[i].top_left());
     //}
-    std::vector<ge211::Rectangle> walls = board_.get_walls();
+
+    // generates maze for board
+    std::vector<ge211::Rectangle> walls = model_.board_.get_walls();
     for (int i = 0; i < walls.size(); i++){
         if (walls[i].dimensions().height == model_.geometry_.wall_thickness_){
             sprites.add_sprite(h_wall_, walls[i].top_left());
@@ -51,6 +52,10 @@ void Ui::draw(ge211::Sprite_set& sprites)
             sprites.add_sprite(v_wall_, walls[i].top_left());
         }
     }
+
+    // creates score_board
+    sprites.add_sprite(first_score_board, model_.geometry_.first_board_pos);
+    sprites.add_sprite(second_score_board, model_.geometry_.second_board_pos);
 
 }
 

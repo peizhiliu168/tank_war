@@ -21,6 +21,8 @@
 
 #include "ball.hxx"
 #include "geometry.hxx"
+#include "player_score.hxx"
+#include "board.hxx"
 #include <vector>
 
 // The logical state of the game.
@@ -128,7 +130,10 @@ struct Model
 
     Ball               ball_blue_;
 
+    Board board_;
 
+    Player_score first_score_;
+    Player_score second_score_;
 
 };
 
