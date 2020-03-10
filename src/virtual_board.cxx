@@ -86,7 +86,7 @@ void Virtual_Board::recur_backtrack_() {
                 break;
             }
 
-            pos_stack.erase(pos_stack.end());
+            pos_stack.erase(pos_stack.end() - 1);
             curr_pos = pos_stack[pos_stack.size()-1];
         }
     }
