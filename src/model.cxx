@@ -1,87 +1,135 @@
-// YOU DEFINITELY NEED TO MODIFY THIS FILE.
-
 #include "model.hxx"
-
 Model::Model(Geometry const& geometry)
         : geometry_(geometry)
-        , tank1_(Block::from_top_left(geometry_.tank_top_left1(),
+        , tank_red_(Block::from_top_left(geometry_.tank_top_left_red(),
                                        geometry_.tank_dims_))
-        , tank2_(Block::from_top_left(geometry_.tank_top_left2(),
+        , tank_blue_(Block::from_top_left(geometry_.tank_top_left_blue(),
                                       geometry_.tank_dims_))
-        , ball_red_(tank1_, geometry_, geometry_.ball_red_velocity0)
-        , ball_blue_(tank2_, geometry_, geometry_.ball_blue_velocity0)
+        , tank_red_orientation_(1)
+        , tank_blue_orientation_(3)
+        , ball_red_(tank_red_, geometry_, geometry_.ball_red_velocity0)
+        , ball_blue_(tank_blue_, geometry_, geometry_.ball_blue_velocity0)
+        , base_red_(Block::from_top_left(geometry_.base_top_left_red(),
+                                         geometry_.base_dims_))
+        , base_blue_(Block::from_top_left(geometry_.base_top_left_blue(),
+                                          geometry_.base_dims_))
         , first_score_()
         , second_score_()
         , board_(geometry_.board_size.width, geometry_.board_size.height)
-{}
-
-
-
-// Freebie.
+{
+}
+///Launch cannon balls
 void Model::launch_red()
 {
     ball_red_.live_ = true;
 }
-
 void Model::launch_blue()
 {
     ball_blue_.live_ = true;
 }
-
-// Warning! Until you write code inside these member functions
-// that uses at least one member variable, CLion is going to
-// insist that you can make this function static. Don’t believe
-// it! You’ll regret the change if you do once you want to
-// access member variables, since a static member function
-// doesn’t have access to an instance. (You should delete this
-// warning after you’ve read it.)
-//
-// TL;DR: Don't go adding `static` to members.
-
-void Model::update(int boost)
+///Update cannon balls
+void Model::update()
 {
+    //Ball ball1(ball_red_.next());
+    //Ball ball2(ball_blue_.next());
+    if (ball_red_.hits_ball(ball_blue_)&&ball_red_.live_&&ball_blue_.live_){
+        ball_red_.live_ = false;
+        ball_blue_.live_ = false;
+        ball_blue_reset();
+        ball_red_reset();
+    }
     Ball b1(ball_red_.next());
     if (ball_red_.live_){
-        if (b1.hits_bottom(geometry_)||b1.hits_top(geometry_)||b1.hits_side(geometry_)||b1.destroy_brick(bricks_)){
+        if (b1.hits_bottom(geometry_)||
+            b1.hits_top(geometry_)||
+            b1.hits_side(geometry_)){
             ball_red_.live_ = false;
-            ball_red_.velocity_ = geometry_.ball_red_velocity0;
-            ball_red_.center_.y = tank1_.top_left().y - geometry_.ball_radius - 1;
-            ball_red_.center_.x = tank1_.x+tank1_.width/2;
+            ball_red_reset();
             return;
         }
-        //if (b1.hits_block(tank1_)) {
-            //ball_red_.reflect_vertical();
-            //ball_red_.velocity_.width = b1.velocity_.width + boost;
-        //}
-        // need to add more to this so that it can destroy the opponent
+        if (b1.hits_block(tank_blue_)||
+            b1.hits_block(base_blue_)){
+            game_reset();
+            return;
+        }
         ball_red_ = ball_red_.next();
     } else{
-        Ball b(ball_red_);
-        b.center_.x = tank1_.x+tank1_.width/2;
-        b.center_.y = tank1_.y - b.radius_;
-        ball_red_ = b;
+        ball_red_reset();
     }
     Ball b2(ball_blue_.next());
     if (ball_blue_.live_){
-        if (b2.hits_bottom(geometry_)||b2.hits_top(geometry_)||b2.hits_side(geometry_)||b2.destroy_brick(bricks_)){
+        if (b2.hits_bottom(geometry_)||
+            b2.hits_top(geometry_)||
+            b2.hits_side(geometry_)){
             ball_blue_.live_ = false;
-            ball_blue_.velocity_ = geometry_.ball_blue_velocity0;
-            ball_blue_.center_.y = tank2_.top_left().y + tank2_.height + geometry_.ball_radius + 1;
-            ball_blue_.center_.x = tank2_.x+tank2_.width/2;
+            ball_blue_reset();
             return;
         }
-        //if (b1.hits_block(tank1_)) {
-        //ball_red_.reflect_vertical();
-        //ball_red_.velocity_.width = b1.velocity_.width + boost;
-        //}
-        // need to add more to this so that it can destroy the opponent
+        if (b2.hits_block(tank_red_)||
+            b2.hits_block(base_red_)){
+            game_reset();
+            return;
+        }
         ball_blue_ = ball_blue_.next();
     } else{
-        Ball b(ball_blue_);
-        b.center_.x = tank2_.x+tank2_.width/2;
-        b.center_.y = tank2_.y + tank2_.height + b.radius_;
-        ball_blue_ = b;
+        ball_blue_reset();
+    }
+
+}
+
+void Model::game_reset() {
+        tank_red_ = Block::from_top_left(geometry_.tank_top_left_red(),
+                                       geometry_.tank_dims_);
+        tank_blue_ = Block::from_top_left(geometry_.tank_top_left_blue(),
+                                         geometry_.tank_dims_);
+        tank_red_orientation_ = 1;
+        tank_blue_orientation_ = 3;
+        ball_red_.live_ = false;
+        ball_blue_.live_ = false;
+}
+
+void Model::ball_red_reset() {
+    if (tank_red_orientation_ == 1){
+        ball_red_.center_.x = tank_red_.x+tank_red_.width/2;
+        ball_red_.center_.y = tank_red_.top_left().y - geometry_.ball_radius - 1;
+        ball_red_.velocity_ = {0, -geometry_.ball_speed};
+    }
+    if (tank_red_orientation_ == 2){
+        ball_red_.center_.y = tank_red_.y+tank_red_.height/2;
+        ball_red_.center_.x = tank_red_.top_left().x + tank_red_.width+geometry_.ball_radius+1;
+        ball_red_.velocity_ = {geometry_.ball_speed, 0};
+    }
+    if (tank_red_orientation_ == 3){
+        ball_red_.center_.x = tank_red_.x+tank_red_.width/2;
+        ball_red_.center_.y = tank_red_.top_left().y + tank_red_.height+geometry_.ball_radius+1;
+        ball_red_.velocity_ = {0, geometry_.ball_speed};
+    }
+    if (tank_red_orientation_ == 4){
+        ball_red_.center_.y = tank_red_.y+tank_red_.height/2;
+        ball_red_.center_.x = tank_red_.top_left().x - geometry_.ball_radius - 1;
+        ball_red_.velocity_ = {-geometry_.ball_speed, 0};
     }
 }
 
-
+void Model::ball_blue_reset() {
+    if (tank_blue_orientation_ == 1){
+        ball_blue_.center_.x = tank_blue_.x+tank_blue_.width/2;
+        ball_blue_.center_.y = tank_blue_.top_left().y - geometry_.ball_radius - 1;
+        ball_blue_.velocity_ = {0, -geometry_.ball_speed};
+    }
+    if (tank_blue_orientation_ == 2){
+        ball_blue_.center_.y = tank_blue_.y+tank_blue_.height/2;
+        ball_blue_.center_.x = tank_blue_.top_left().x + tank_blue_.width+geometry_.ball_radius+1;
+        ball_blue_.velocity_ = {geometry_.ball_speed, 0};
+    }
+    if (tank_blue_orientation_ == 3){
+        ball_blue_.center_.x = tank_blue_.x+tank_blue_.width/2;
+        ball_blue_.center_.y = tank_blue_.top_left().y + tank_blue_.height+geometry_.ball_radius+1;
+        ball_blue_.velocity_ = {0, geometry_.ball_speed};
+    }
+    if (tank_blue_orientation_ == 4){
+        ball_blue_.center_.y = tank_blue_.y+tank_blue_.height/2;
+        ball_blue_.center_.x = tank_blue_.top_left().x - geometry_.ball_radius - 1;
+        ball_blue_.velocity_ = {-geometry_.ball_speed, 0};
+    }
+}
