@@ -42,7 +42,8 @@ void Model::update()
     if (ball_red_.live_){
         if (b1.hits_bottom(geometry_)||
             b1.hits_top(geometry_)||
-            b1.hits_side(geometry_)){
+            b1.hits_side(geometry_)||
+            board_.destroy_wall(b1)){
             ball_red_.live_ = false;
             ball_red_reset();
             return;
@@ -60,7 +61,8 @@ void Model::update()
     if (ball_blue_.live_){
         if (b2.hits_bottom(geometry_)||
             b2.hits_top(geometry_)||
-            b2.hits_side(geometry_)){
+            b2.hits_side(geometry_)||
+            board_.destroy_wall(b2)){
             ball_blue_.live_ = false;
             ball_blue_reset();
             return;

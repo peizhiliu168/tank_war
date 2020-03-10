@@ -18,9 +18,23 @@ std::vector<ge211::geometry::Rectangle> Board::get_walls() const {
     return walls_;
 }
 
-bool Board::destroy_wall(const ge211::Rectangle cannon) {
+bool Board::is_touching_wall(const ge211::Rectangle tank){
     for (int i = 0; i < walls_.size(); i++){
-        if (is_touching(cannon, walls_[i])){
+        if (is_touching(tank, walls_[i])){
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Board::destroy_wall(const Ball cannon) {
+    for (int i = 0; i < walls_.size(); i++){
+        ge211::Rectangle bounding_box {};
+        bounding_box.height = 2 * cannon.radius_;
+        bounding_box.width = 2 * cannon.radius_;
+        bounding_box.x = cannon.top_left().x;
+        bounding_box.y = cannon.top_left().y;
+        if (is_touching(bounding_box, walls_[i])){
             walls_.erase(walls_.begin() + i);
             return true;
         }
@@ -38,7 +52,7 @@ bool Board::is_touching(const ge211::Rectangle object, const ge211::Rectangle wa
         return false;
     }
 
-    if (object_tl.y < wall_br.y || object_br.y > wall_tl.y){
+    if (object_tl.y > wall_br.y || object_br.y < wall_tl.y){
         return false;
     }
 

@@ -4,6 +4,7 @@
 #include <ge211.hxx>
 #include "virtual_board.hxx"
 #include "geometry.hxx"
+#include "ball.hxx"
 
 class Board{
 public:
@@ -17,7 +18,7 @@ public:
     // rectangle, do nothing and return false.
     //
     // Use this for detecting collision with cannon.
-    bool destroy_wall(ge211::Rectangle);
+    bool destroy_wall(Ball);
 
     // takes in 2 rectangles and determines whether they are touching, indicating
     // a collision.
@@ -25,6 +26,7 @@ public:
     // Use this for detecting collision with tank
     bool is_touching(ge211::Rectangle, ge211::Rectangle);
 
+    bool is_touching_wall(const ge211::Rectangle tank);
 
 private:
 
@@ -38,4 +40,5 @@ private:
     ge211::Dimensions h_wall_dim_;
     ge211::Dimensions square_dim_;
     Virtual_Board virtual_board_;
+
 };
