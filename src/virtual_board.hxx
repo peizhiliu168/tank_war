@@ -50,6 +50,5 @@ private:
     int width_;
     int height_;
 
-
-
+    void remove_boundary();
 };

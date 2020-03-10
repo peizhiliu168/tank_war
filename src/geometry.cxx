@@ -23,9 +23,9 @@ Geometry::Geometry() noexcept
         , board_size {5, 5}
         , start {board_margin_, board_margin_}
         , end {scene_dims.width - board_margin_, scene_dims.height - board_margin_ - score_height}
-        , score_height {100}
-        , first_board_pos {start.x, end.y + wall_thickness_}
-        , second_board_pos {end.x - score_board_size.width,end.y + wall_thickness_}
+        , score_height {0}
+        , first_board_pos {end.x - score_board_size.width, start.y}
+        , second_board_pos {start.x,scene_dims.height - score_board_size.height - start.y}
         , score_board_size {75,50}
 {}
 

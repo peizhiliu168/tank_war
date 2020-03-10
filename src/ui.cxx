@@ -47,9 +47,9 @@ void Ui::draw(ge211::Sprite_set& sprites)
     std::vector<ge211::Rectangle> walls = model_.board_.get_walls();
     for (int i = 0; i < walls.size(); i++){
         if (walls[i].dimensions().height == model_.geometry_.wall_thickness_){
-            sprites.add_sprite(h_wall_, walls[i].top_left());
+            sprites.add_sprite(h_wall_, walls[i].top_left(),0);
         } else{
-            sprites.add_sprite(v_wall_, walls[i].top_left());
+            sprites.add_sprite(v_wall_, walls[i].top_left(),0);
         }
     }
 

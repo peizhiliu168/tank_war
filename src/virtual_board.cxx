@@ -18,6 +18,7 @@ Virtual_Board::Virtual_Board(int width, int height) {
 void Virtual_Board::vb_create() {
     recur_backtrack_();
     remove_duplicate_edges();
+    remove_boundary();
 
 }
 square Virtual_Board::get_square_given_pos(ge211::Position pos) const{
@@ -158,5 +159,24 @@ void Virtual_Board::remove_duplicate_edges(){
     }
 }
 
+void Virtual_Board::remove_boundary(){
+    for (int i = 0; i < width_; ++i) {
+        for (int j = 0; j < height_; ++j) {
+            square *curr_square = get_square_given_pos_({i, j});
+            if (i == 0){
+                curr_square->side_pres[3] = false;
+            }
+            if (i == width_ - 1){
+                curr_square->side_pres[1] = false;
+            }
+            if (j == 0){
+                curr_square->side_pres[0] = false;
+            }
+            if (j == height_ - 1){
+                curr_square->side_pres[2] = false;
+            }
+        }
+    }
+}
 
 
