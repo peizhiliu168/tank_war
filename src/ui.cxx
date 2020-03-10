@@ -4,11 +4,9 @@
 /// VIEW CONSTANTS
 ///
 
-// Colors are red-green-blue(-alpha), each component
-// from 0 to 255.
-ge211::Color const ball_red_color    {255, 127, 127};
-ge211::Color const ball_blue_color    {127, 127, 255};
-ge211::Color const paddle_color  {127, 255, 127};
+ge211::Color const ball_red_color    {255, 51, 51};
+ge211::Color const ball_blue_color    {51, 255, 255};
+ge211::Color const tank_color  {0, 255, 0};
 ge211::Color const brick_color   {100, 100, 100};
 ge211::Color const base_color   {255, 255, 255};
 
@@ -16,9 +14,6 @@ ge211::Color const base_color   {255, 255, 255};
 /// VIEW FUNCTIONS
 ///
 
-// Data members that are references cannot be initialized by assignment
-// in the constructor body and must be initialized in a member
-// initializer list.
 Ui::Ui(Model& model)
         : model_(model)
         , w(false)
@@ -119,117 +114,208 @@ void Ui::on_key(ge211::Key key)
         quit();
 
     ///cannon ball operations
-    if (j == true || key == ge211::Key::code('j')){
+    if ( j || key == ge211::Key::code('j')){
         model_.launch_red();
     }
-    if (p == true || key == ge211::Key::code('p')){
+    if ( p || key == ge211::Key::code('p')){
         model_.launch_blue();
     }
 
     ///tank red operations
-    if (a == true || key == ge211::Key::code('a')){
+    if ( a ){
         if (model_.tank_red_orientation_ == 1) {
             model_.tank_red_orientation_ = 4;
         }
         else{
             model_.tank_red_orientation_ = model_.tank_red_orientation_ - 1;
         }
+        a = false;
     }
-    if (s == true || key == ge211::Key::code('s')){
-        if (model_.tank_red_orientation_ == 1)
-            if (model_.tank_red_.y+tank_sprite_.dimensions().height+3 < model_.geometry_.scene_dims.height
-                && !model_.board_.is_touching_wall(model_.tank_red_, 1))
-                model_.tank_red_.y += 3;
-        if (model_.tank_red_orientation_ == 3)
-            if (model_.tank_red_.y-3 > 0
-                && !model_.board_.is_touching_wall(model_.tank_red_, 3))
+    if ( s || key == ge211::Key::code('s')){
+        if (model_.tank_red_orientation_ == 1 &&
+            model_.tank_red_.y+tank_sprite_.dimensions().height+3 < model_.geometry_.scene_dims.height &&
+            !model_.board_.is_touching_wall(model_.tank_red_, 3) &&
+            !tank_collision(model_.tank_red_, model_.tank_blue_)){
+            model_.tank_red_.y += 3;
+            if (model_.board_.is_touching_wall(model_.tank_red_, 3) ||
+                tank_collision(model_.tank_red_, model_.tank_blue_))
                 model_.tank_red_.y -= 3;
-        if (model_.tank_red_orientation_ == 2){
-            if (model_.tank_red_.x-3 > 0
-                && !model_.board_.is_touching_wall(model_.tank_red_, 2))
-                model_.tank_red_.x -= 3;
         }
-        if (model_.tank_red_orientation_ == 4){
-            if (model_.tank_red_.x+tank_sprite_.dimensions().width+3 < model_.geometry_.scene_dims.width
-                && !model_.board_.is_touching_wall(model_.tank_red_, 4))
+
+        if (model_.tank_red_orientation_ == 3 &&
+            model_.tank_red_.y-3 > 0 &&
+            !model_.board_.is_touching_wall(model_.tank_red_, 1) &&
+            !tank_collision(model_.tank_red_, model_.tank_blue_)) {
+            model_.tank_red_.y -= 3;
+            if (model_.board_.is_touching_wall(model_.tank_red_, 1) ||
+                tank_collision(model_.tank_red_, model_.tank_blue_))
+                model_.tank_red_.y += 3;
+        }
+        if (model_.tank_red_orientation_ == 2 &&
+            model_.tank_red_.x-3 > 0 &&
+            !model_.board_.is_touching_wall(model_.tank_red_, 4) &&
+            !tank_collision(model_.tank_red_, model_.tank_blue_)) {
+            model_.tank_red_.x -= 3;
+            if (model_.board_.is_touching_wall(model_.tank_red_, 4) ||
+                tank_collision(model_.tank_red_, model_.tank_blue_))
                 model_.tank_red_.x += 3;
         }
+        if (model_.tank_red_orientation_ == 4 &&
+            model_.tank_red_.x+tank_sprite_.dimensions().width+3 < model_.geometry_.scene_dims.width &&
+            !model_.board_.is_touching_wall(model_.tank_red_, 2) &&
+            !tank_collision(model_.tank_red_, model_.tank_blue_)) {
+            model_.tank_red_.x += 3;
+            if (model_.board_.is_touching_wall(model_.tank_red_, 2) ||
+                tank_collision(model_.tank_red_, model_.tank_blue_))
+                model_.tank_red_.x -= 3;
+        }
     }
-    if (w == true || key == ge211::Key::code('w')){
+
+    if ( w || key == ge211::Key::code('w')){
         if (model_.tank_red_orientation_ == 1 &&
             !model_.board_.is_touching_wall(model_.tank_red_, 1) &&
-            model_.tank_red_.y-3 > 0)
-                model_.tank_red_.y -= 3;
-        if (model_.tank_red_orientation_ == 3)
-            if (model_.tank_red_.y+tank_sprite_.dimensions().height+3 < model_.geometry_.scene_dims.height
-            && !model_.board_.is_touching_wall(model_.tank_red_, 3))
+            model_.tank_red_.y-3 > 0 &&
+            !tank_collision(model_.tank_red_, model_.tank_blue_)) {
+            model_.tank_red_.y -= 3;
+            if (model_.board_.is_touching_wall(model_.tank_red_, 1) ||
+                tank_collision(model_.tank_red_, model_.tank_blue_))
                 model_.tank_red_.y += 3;
-        if (model_.tank_red_orientation_ == 2)
-            if (model_.tank_red_.x+tank_sprite_.dimensions().width+3 < model_.geometry_.scene_dims.width
-                && !model_.board_.is_touching_wall(model_.tank_red_, 2))
-                model_.tank_red_.x += 3;
-        if (model_.tank_red_orientation_ == 4 )
-            if (model_.tank_red_.x-3 > 0
-                && !model_.board_.is_touching_wall(model_.tank_red_, 4))
+        }
+        if (model_.tank_red_orientation_ == 3 &&
+            model_.tank_red_.y+tank_sprite_.dimensions().height+3 < model_.geometry_.scene_dims.height &&
+            !model_.board_.is_touching_wall(model_.tank_red_, 3) &&
+            !tank_collision(model_.tank_red_, model_.tank_blue_)) {
+            model_.tank_red_.y += 3;
+            if (model_.board_.is_touching_wall(model_.tank_red_, 3) ||
+                tank_collision(model_.tank_red_, model_.tank_blue_))
+                model_.tank_red_.y -= 3;
+        }
+        if (model_.tank_red_orientation_ == 2 &&
+            model_.tank_red_.x+tank_sprite_.dimensions().width+3 < model_.geometry_.scene_dims.width &&
+            !model_.board_.is_touching_wall(model_.tank_red_, 2) &&
+            !tank_collision(model_.tank_red_, model_.tank_blue_)) {
+            model_.tank_red_.x += 3;
+            if (model_.board_.is_touching_wall(model_.tank_red_, 2) ||
+                tank_collision(model_.tank_red_, model_.tank_blue_))
                 model_.tank_red_.x -= 3;
+        }
+        if (model_.tank_red_orientation_ == 4 &&
+            model_.tank_red_.x-3 > 0 &&
+            !model_.board_.is_touching_wall(model_.tank_red_, 4) &&
+            !tank_collision(model_.tank_red_, model_.tank_blue_)) {
+            model_.tank_red_.x -= 3;
+            if (model_.board_.is_touching_wall(model_.tank_red_, 4) ||
+                tank_collision(model_.tank_red_, model_.tank_blue_))
+                model_.tank_red_.x += 3;
+        }
     }
-    if (d == true || key == ge211::Key::code('d')) {
+    if ( d ) {
         if (model_.tank_red_orientation_ == 4) {
             model_.tank_red_orientation_ = 1;
         }
         else{
             model_.tank_red_orientation_ = model_.tank_red_orientation_ + 1;
         }
+        d = false;
     }
 
     ///tank blue operations
-    if (up == true || key == ge211::Key::up()){
-        if (model_.tank_blue_orientation_ == 1)
-            if (model_.tank_blue_.y-3 > 0)
-                model_.tank_blue_.y -= 3;
-        if (model_.tank_blue_orientation_ == 3)
-            if (model_.tank_blue_.y+tank_sprite_.dimensions().height+3 < model_.geometry_.scene_dims.height
-            && !model_.board_.is_touching_wall(model_.tank_blue_, 3))
+    if ( up || key == ge211::Key::up()){
+        if (model_.tank_blue_orientation_ == 1 &&
+            !model_.board_.is_touching_wall(model_.tank_blue_, 1) &&
+            model_.tank_blue_.y-3 > 0 &&
+            !tank_collision(model_.tank_red_, model_.tank_blue_)) {
+            model_.tank_blue_.y -= 3;
+            if (model_.board_.is_touching_wall(model_.tank_blue_, 1) ||
+                tank_collision(model_.tank_red_, model_.tank_blue_))
                 model_.tank_blue_.y += 3;
-        if (model_.tank_blue_orientation_ == 2)
-            if (model_.tank_blue_.x+tank_sprite_.dimensions().width+3 < model_.geometry_.scene_dims.width
-            && !model_.board_.is_touching_wall(model_.tank_blue_, 2))
-                model_.tank_blue_.x += 3;
-        if (model_.tank_blue_orientation_ == 4)
-            if (model_.tank_blue_.x-3 > 0)
-                model_.tank_blue_.x -= 3;
-    }
-    if (down == true || key == ge211::Key::down()){
-        if (model_.tank_blue_orientation_ == 1)
-            if (model_.tank_blue_.y+tank_sprite_.dimensions().height+3 < model_.geometry_.scene_dims.height
-            && !model_.board_.is_touching_wall(model_.tank_blue_, 1))
-                model_.tank_blue_.y += 3;
-        if (model_.tank_blue_orientation_ == 3)
-            if (model_.tank_blue_.y-3 > 0)
+        }
+        if (model_.tank_blue_orientation_ == 3 &&
+            model_.tank_blue_.y+tank_sprite_.dimensions().height+3 < model_.geometry_.scene_dims.height &&
+            !model_.board_.is_touching_wall(model_.tank_blue_, 3) &&
+            !tank_collision(model_.tank_red_, model_.tank_blue_)) {
+            model_.tank_blue_.y += 3;
+            if (model_.board_.is_touching_wall(model_.tank_blue_, 3) ||
+                tank_collision(model_.tank_red_, model_.tank_blue_))
                 model_.tank_blue_.y -= 3;
-        if (model_.tank_blue_orientation_ == 2)
-            if (model_.tank_blue_.x-3 > 0)
+        }
+        if (model_.tank_blue_orientation_ == 2 &&
+            model_.tank_blue_.x+tank_sprite_.dimensions().width+3 < model_.geometry_.scene_dims.width &&
+            !model_.board_.is_touching_wall(model_.tank_blue_, 2) &&
+            !tank_collision(model_.tank_red_, model_.tank_blue_)) {
+            model_.tank_blue_.x += 3;
+            if (model_.board_.is_touching_wall(model_.tank_blue_, 2) ||
+                tank_collision(model_.tank_red_, model_.tank_blue_))
                 model_.tank_blue_.x -= 3;
-        if (model_.tank_blue_orientation_ == 4)
-            if (model_.tank_blue_.x+tank_sprite_.dimensions().width+3 < model_.geometry_.scene_dims.width
-            && !model_.board_.is_touching_wall(model_.tank_blue_, 4))
+        }
+        if (model_.tank_blue_orientation_ == 4 &&
+            model_.tank_blue_.x-3 > 0 &&
+            !model_.board_.is_touching_wall(model_.tank_blue_, 4) &&
+            !tank_collision(model_.tank_red_, model_.tank_blue_)) {
+            model_.tank_blue_.x -= 3;
+            if (model_.board_.is_touching_wall(model_.tank_blue_, 4) ||
+                tank_collision(model_.tank_red_, model_.tank_blue_))
                 model_.tank_blue_.x += 3;
+        }
     }
-    if (left == true || key == ge211::Key::left()) {
+
+    if ( down || key == ge211::Key::down()){
+        if (model_.tank_blue_orientation_ == 1 &&
+            model_.tank_blue_.y+tank_sprite_.dimensions().height+3 < model_.geometry_.scene_dims.height &&
+            !model_.board_.is_touching_wall(model_.tank_blue_, 3) &&
+            !tank_collision(model_.tank_red_, model_.tank_blue_)) {
+            model_.tank_blue_.y += 3;
+            if (model_.board_.is_touching_wall(model_.tank_blue_, 3) ||
+                tank_collision(model_.tank_red_, model_.tank_blue_))
+                model_.tank_blue_.y -= 3;
+        }
+        if (model_.tank_blue_orientation_ == 3 &&
+            model_.tank_blue_.y-3 > 0 &&
+            !model_.board_.is_touching_wall(model_.tank_blue_, 1) &&
+            !tank_collision(model_.tank_red_, model_.tank_blue_)) {
+            model_.tank_blue_.y -= 3;
+            if (model_.board_.is_touching_wall(model_.tank_blue_, 1) ||
+                tank_collision(model_.tank_red_, model_.tank_blue_))
+                model_.tank_blue_.y += 3;
+        }
+        if (model_.tank_blue_orientation_ == 2 &&
+            model_.tank_blue_.x-3 > 0 &&
+            !model_.board_.is_touching_wall(model_.tank_blue_, 4) &&
+            !tank_collision(model_.tank_red_, model_.tank_blue_)) {
+            model_.tank_blue_.x -= 3;
+            if (model_.board_.is_touching_wall(model_.tank_blue_, 4) ||
+                tank_collision(model_.tank_red_, model_.tank_blue_))
+                model_.tank_blue_.x += 3;
+        }
+        if (model_.tank_blue_orientation_ == 4 &&
+            model_.tank_blue_.x+tank_sprite_.dimensions().width+3 < model_.geometry_.scene_dims.width &&
+            !model_.board_.is_touching_wall(model_.tank_blue_, 2) &&
+            !tank_collision(model_.tank_red_, model_.tank_blue_)) {
+            model_.tank_blue_.x += 3;
+            if (model_.board_.is_touching_wall(model_.tank_blue_, 2) ||
+                tank_collision(model_.tank_red_, model_.tank_blue_))
+                model_.tank_blue_.x -= 3;
+        }
+    }
+
+    if ( left ) {
         if (model_.tank_blue_orientation_ == 1) {
             model_.tank_blue_orientation_ = 4;
         }
         else{
             model_.tank_blue_orientation_ -= 1;
         }
+        left = false;
     }
-    if (right == true || key == ge211::Key::right()) {
+
+    if ( right ) {
         if (model_.tank_blue_orientation_ == 4) {
             model_.tank_blue_orientation_ = 1;
         }
         else{
             model_.tank_blue_orientation_ += 1;
         }
+        right = false;
     }
 }
 
@@ -237,4 +323,20 @@ void Ui::on_frame(double)
 {
     // TODO: your code here
     model_.update();
+}
+
+bool Ui::tank_collision(ge211::Rectangle tank1, ge211::Rectangle tank2){
+    ge211::Position tank1_tl = tank1.top_left();
+    ge211::Position tank1_br = tank1.bottom_right();
+    ge211::Position tank2_tl = tank2.top_left();
+    ge211::Position tank2_br = tank2.bottom_right();
+
+    if (tank1_br.x <= tank2_tl.x || tank1_tl.x >= tank2_br.x) {
+        return false;
+    }
+    if (tank1_tl.y >= tank2_br.y || tank1_br.y <= tank2_tl.y) {
+        return false;
+    }
+
+    return true;
 }

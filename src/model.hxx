@@ -36,8 +36,6 @@ struct Model
 
     Geometry const     geometry_;
 
-    std::vector<Block> bricks_;
-
     // The position and dimensions of the tanks.
     Block              tank_red_;
     Block              tank_blue_;

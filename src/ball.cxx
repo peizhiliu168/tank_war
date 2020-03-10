@@ -58,21 +58,8 @@ bool Ball::hits_ball(Ball const& ball) const{
               ball.center_.y+ball.radius_<center_.y-radius_));
 }
 
-bool Ball::destroy_brick(std::vector<Block>& bricks) const
-{
-    for(int i=0; i < bricks.size(); i++){
-        if (hits_block(bricks[i])){
-            std::swap(bricks[i], bricks.back());
-            bricks.pop_back();
-            return true;
-        }
-    }
-    return false;
-}
-
 bool operator==(Ball const& b1, Ball const& b2)
 {
-    // TODO: your code here
     return (b1.velocity_ == b2.velocity_ &&
             b1.center_ == b2.center_ &&
             b1.radius_ == b2.radius_ &&

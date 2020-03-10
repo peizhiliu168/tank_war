@@ -1,9 +1,7 @@
 cmake_minimum_required(VERSION 3.3)
-project(brick_out CXX)
+project(tank_war CXX)
 include(.cs211/cmake/CMakeLists.txt)
 
-# Defines a variable to stand for the two .cxx files that implement
-# the model.
 set(MODEL_COMMON
         src/geometry.cxx
         src/ball.cxx
@@ -12,16 +10,12 @@ set(MODEL_COMMON
         src/board.cxx
         src/player_score.cxx)
 
-# Adds a program named `brick_out` built from src/brick_out.cxx and
-# the common model files.
-add_program(brick_out
-        src/brick_out.cxx
+add_program(tank_war
+        src/tank_war.cxx
         src/ui.cxx
         ${MODEL_COMMON})
-target_link_libraries(brick_out ge211)
+target_link_libraries(tank_war ge211)
 
-# Adds a test program named `ball_test` built from test/ball_test.cxx
-# and the common model files.
 add_test_program(ball_test
         test/ball_test.cxx
         ${MODEL_COMMON})
@@ -37,8 +31,6 @@ add_test_program(board_test
         ${MODEL_COMMON})
 target_link_libraries(board_test ge211)
 
-# Adds a test program named `model_test` built from test/model_test.cxx
-# and the common model files.
 add_test_program(model_test
         test/model_test.cxx
         ${MODEL_COMMON})

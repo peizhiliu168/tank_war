@@ -30,8 +30,6 @@ void Model::launch_blue()
 ///Update cannon balls
 void Model::update()
 {
-    //Ball ball1(ball_red_.next());
-    //Ball ball2(ball_blue_.next());
     if (ball_red_.hits_ball(ball_blue_)&&ball_red_.live_&&ball_blue_.live_){
         ball_red_.live_ = false;
         ball_blue_.live_ = false;
@@ -135,3 +133,4 @@ void Model::ball_blue_reset() {
         ball_blue_.velocity_ = {-geometry_.ball_speed, 0};
     }
 }
+
