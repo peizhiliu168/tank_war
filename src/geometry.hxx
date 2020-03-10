@@ -1,16 +1,3 @@
-// YOU SHOULD NOT CHANGE THIS FILE.
-//
-// Defines a struct to hold model geometry parameters. You should try
-// different values to ensure that your model and UI adjust
-// appropriately. You can do this by creating an instance and then assigning
-// its parameters before constructing a `Model`:
-//
-//     Geometry geometry;
-//     geometry.brick_cols = 15;
-//     geometry.ball_radius *= 2;
-//     Model model(geometry);
-//
-
 #pragma once
 
 #include <ge211.hxx>
@@ -25,6 +12,9 @@ struct Geometry
 
     // The dimensions of the paddle (the block at the bottom):
     ge211::Dimensions tank_dims_;
+
+    // The dimensions of the base:
+    ge211::Dimensions base_dims_;
 
 
     // Number of columns of bricks:
@@ -46,7 +36,7 @@ struct Geometry
 
     // The maximum amount that bouncing off the paddle boosts the ball's x
     // velocity component:
-    int max_boost;
+    int ball_speed;
 
     // Number of pixels from top of screen to top of brick formation:
     int top_margin;
@@ -78,11 +68,15 @@ struct Geometry
 
     ge211::Position second_board_pos;
 
-
     // The initial position of the paddle. This is a member function because
     // it's computed from the other properties.
-    ge211::Position tank_top_left1() const noexcept;
-    ge211::Position tank_top_left2() const noexcept;
+    ge211::Position tank_top_left_red() const noexcept;
+    ge211::Position tank_top_left_blue() const noexcept;
+
+    // The position of the bases. This is a member function because
+    // it's computed from the other properties.
+    ge211::Position base_top_left_red() const noexcept;
+    ge211::Position base_top_left_blue() const noexcept;
 
     // The dimensions of each brick. Also computed from the other properties.
     //
@@ -97,4 +91,3 @@ struct Geometry
 
     ge211::Dimensions square_dim() const noexcept;
 };
-
