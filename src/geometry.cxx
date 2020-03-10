@@ -1,9 +1,6 @@
-// YOU SHOULD NOT CHANGE THIS FILE.
-
 #include "geometry.hxx"
 
-// This is the default (and only) constructor for `Geometry`. It determines
-// all the default values of all the member variables.
+// Default constructor for "Geometry"
 Geometry::Geometry() noexcept
         : brick_cols     {   10 }
         , brick_rows     {   10 }
@@ -11,13 +8,14 @@ Geometry::Geometry() noexcept
         , side_margin    {  170 }
         , brick_depth    {  300 }
         , bottom_margin  {   10 }
-        , ball_radius    {    5 }
-        , max_boost      {    4 }
-        , ball_red_velocity0 {0, -20}
-        , ball_blue_velocity0 {   0, 20}
+        , ball_radius    {    2 }
+        , ball_speed     {    4 }
+        , ball_red_velocity0 {0, -4}
+        , ball_blue_velocity0 {   0, 4}
         , brick_spacing  {   10,   5 }
         , scene_dims     { 1024, 768 }
         , tank_dims_   {  20,  20 }
+        , base_dims_   {50, 50}
         , board_margin_  {20}
         , wall_thickness_ {20}
         , board_size {5, 5}
@@ -27,17 +25,28 @@ Geometry::Geometry() noexcept
         , first_board_pos {start.x, end.y + wall_thickness_}
         , second_board_pos {end.x - score_board_size.width,end.y + wall_thickness_}
         , score_board_size {75,50}
-{}
+{ }
 
-ge211::Position Geometry::tank_top_left1() const noexcept
+ge211::Position Geometry::tank_top_left_red() const noexcept
 {
     return { scene_dims.width / 2,
              scene_dims.height - bottom_margin - tank_dims_.height };
 }
-ge211::Position Geometry::tank_top_left2() const noexcept
+ge211::Position Geometry::tank_top_left_blue() const noexcept
 {
     return { scene_dims.width / 2,
              bottom_margin};
+}
+
+ge211::Position Geometry::base_top_left_red() const noexcept
+{
+    return { scene_dims.width / 2 + tank_dims_.width/2 - base_dims_.width/2,
+             scene_dims.height - base_dims_.height };
+}
+ge211::Position Geometry::base_top_left_blue() const noexcept
+{
+    return { scene_dims.width / 2 + tank_dims_.width/2 - base_dims_.width/2,
+             0};
 }
 
 // Computes how large each brick can be (in a given dimension), given the
@@ -83,4 +92,3 @@ ge211::Dimensions Geometry::h_wall_dim() const noexcept
     int height = wall_thickness_;
     return {width, height};
 }
-
