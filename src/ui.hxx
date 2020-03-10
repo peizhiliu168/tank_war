@@ -8,7 +8,6 @@
 
 #include "model.hxx"
 #include <ge211.hxx>
-#include <string>
 
 ///
 /// VIEW CONSTANTS
@@ -20,7 +19,7 @@
 // The keyword `extern` is what prevents this declaration from being
 // a definition. That is, this declaration informs subsequent code about
 // the existence of these constants without actually defining them here.
-extern ge211::Color const ball_red_color, ball_blue_color, paddle_color, brick_color;
+extern ge211::Color const ball_red_color, ball_blue_color, paddle_color, brick_color, base_color;
 
 ///
 /// MAIN UI STRUCT
@@ -39,6 +38,17 @@ struct Ui : ge211::Abstract_game
     // implicit conversion whereby you could pass a `Model` to a function
     // that expects a `Ui` and have it work.
     explicit Ui(Model&);
+
+    bool j;
+    bool p;
+    bool w;
+    bool a;
+    bool s;
+    bool d;
+    bool up;
+    bool down;
+    bool left;
+    bool right;
 
     ///
     /// MEMBER FUNCTIONS (for the view)
@@ -66,7 +76,8 @@ struct Ui : ge211::Abstract_game
     //
     //  - On ' ', tells the model to launch the ball.
     void on_key(ge211::Key) override;
-
+    void on_key_down(ge211::Key) override;
+    void on_key_up(ge211::Key) override;
     // Defines how the game responds to mouse clicks (which is by telling
     // the model to launch the ball).
     // void on_mouse_up(ge211::Mouse_button, ge211::Position) override;
@@ -122,6 +133,9 @@ struct Ui : ge211::Abstract_game
             tank_sprite_  {model_.geometry_.tank_dims_, paddle_color};
 
     ge211::Rectangle_sprite const
+            base_sprite_  {model_.geometry_.base_dims_, base_color};
+
+    ge211::Rectangle_sprite const
             brick_sprite_   {model_.geometry_.brick_dims(), brick_color};
 
     ge211::Rectangle_sprite const
@@ -137,6 +151,4 @@ struct Ui : ge211::Abstract_game
     ge211::Rectangle_sprite const
             second_score_board {model_.geometry_.score_board_size,
                                 ge211::Color::from_rgba(1,0,0,1)};
-
-    //ge211::sprites::Text_sprite(std::string const , )
 };
