@@ -24,9 +24,9 @@ public:
     // a collision.
     //
     // Use this for detecting collision with tank
-    bool is_touching(ge211::Rectangle, ge211::Rectangle);
+    bool is_touching(ge211::Rectangle, ge211::Rectangle, const int);
 
-    bool is_touching_wall(const ge211::Rectangle tank);
+    bool is_touching_wall(const ge211::Rectangle tank, const int);
 
 private:
 

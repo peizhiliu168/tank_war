@@ -18,9 +18,9 @@ std::vector<ge211::geometry::Rectangle> Board::get_walls() const {
     return walls_;
 }
 
-bool Board::is_touching_wall(const ge211::Rectangle tank){
+bool Board::is_touching_wall(const ge211::Rectangle tank, const int ori){
     for (int i = 0; i < walls_.size(); i++){
-        if (is_touching(tank, walls_[i])){
+        if (is_touching(tank, walls_[i], ori)){
             return true;
         }
     }
@@ -34,7 +34,7 @@ bool Board::destroy_wall(const Ball cannon) {
         bounding_box.width = 2 * cannon.radius_;
         bounding_box.x = cannon.top_left().x;
         bounding_box.y = cannon.top_left().y;
-        if (is_touching(bounding_box, walls_[i])){
+        if (is_touching(bounding_box, walls_[i], 0)){
             walls_.erase(walls_.begin() + i);
             return true;
         }
@@ -42,22 +42,30 @@ bool Board::destroy_wall(const Ball cannon) {
     return false;
 }
 
-bool Board::is_touching(const ge211::Rectangle object, const ge211::Rectangle wall) {
+bool Board::is_touching(const ge211::Rectangle object, const ge211::Rectangle wall, const int ori) {
     ge211::Position object_tl = object.top_left();
     ge211::Position object_br = object.bottom_right();
     ge211::Position wall_tl = wall.top_left();
     ge211::Position wall_br = wall.bottom_right();
-
-    if (object_br.x < wall_tl.x || object_tl.x > wall_br.x){
-        return false;
+    if (ori == 0) {
+        if (object_br.x <= wall_tl.x || object_tl.x >= wall_br.x) {
+            return false;
+        }
+        if (object_tl.y >= wall_br.y || object_br.y <= wall_tl.y) {
+            return false;
+        }
+        return true;
     }
+    if (ori == 1 && (object_tl.y <= wall_br.y && object_tl.y>=wall_tl.y) && (object_br.x >= wall_tl.x && object_tl.x <= wall_br.x))
+        return true;
+    if (ori == 2 && (object_br.x >= wall_tl.x&&object_br.x<=wall_br.x) && (object_tl.y <= wall_br.y && object_br.y >= wall_tl.y))
+        return true;
+    if (ori == 3 && (object_br.y >= wall_tl.y && object_br.y<=wall_br.y) && (object_br.x >= wall_tl.x && object_tl.x <= wall_br.x))
+        return true;
+    if (ori == 4 && (object_tl.x <= wall_br.x&&object_tl.x>=wall_tl.x) && (object_tl.y <= wall_br.y && object_br.y >= wall_tl.y))
+        return true;
 
-    if (object_tl.y > wall_br.y || object_br.y < wall_tl.y){
-        return false;
-    }
-
-    return true;
-
+    return false;
 }
 
 ///////////////////Private////////////////////////
