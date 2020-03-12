@@ -2,6 +2,9 @@
 
 #include "model.hxx"
 #include <ge211.hxx>
+#include <string>
+// NOTE: player number and player color will used interchangeably
+// blue player = player 1, red player = player 2
 
 ///
 /// VIEW CONSTANTS
@@ -32,6 +35,10 @@ struct Ui : ge211::Abstract_game
     bool left;
     bool right;
 
+    ge211::Font win_font_{"timesbd.ttf", 90};
+    ge211::Font player_font_{"times.ttf", 20};
+    ge211::Font score_font_{"times.ttf", 30};
+
     ///
     /// MEMBER FUNCTIONS (for the view)
     ///
@@ -52,7 +59,7 @@ struct Ui : ge211::Abstract_game
 
     void on_frame(double dt) override;
 
-    bool tank_collision(ge211::Rectangle, ge211::Rectangle);
+    static bool tank_collision(ge211::Rectangle, ge211::Rectangle);
 
     ///
     /// MEMBER VARIABLE (model reference)
@@ -89,4 +96,20 @@ struct Ui : ge211::Abstract_game
     ge211::Rectangle_sprite const
             first_score_board {model_.geometry_.score_board_size,
                                 ge211::Color::from_rgba(255,51,51)};
+
+    ge211::Text_sprite first_score
+            {std::to_string(model_.blue_score_.get_score()), score_font_};
+
+    ge211::Text_sprite second_score
+            {std::to_string(model_.red_score_.get_score()), score_font_};
+
+    ge211::Text_sprite player_one
+            {"Player 1", player_font_};
+    ge211::Text_sprite player_two
+            {"Player 2", player_font_};
+
+    ge211::Text_sprite player_1_win
+            {"Winner is Player 1!", win_font_};
+    ge211::Text_sprite player_2_win
+            {"Winner is Player 2!", win_font_};
 };

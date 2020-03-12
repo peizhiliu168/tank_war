@@ -10,11 +10,14 @@ struct square{
     bool  visited;
 };
 
-class Virtual_Board
+class Virtual_board
 {
 public:
+
+    //~Virtual_board();
+
     // constructor, takes in width and height of the virtual board
-    explicit Virtual_Board(int, int);
+    explicit Virtual_board(int, int);
 
     // returns the width of the board
     int height();
@@ -24,6 +27,8 @@ public:
 
     // returns the square given a specific position
     square get_square_given_pos(ge211::Position) const;
+
+    Virtual_board& operator=(const Virtual_board& );
 
 private:
     // creates maze-like pattern for the board

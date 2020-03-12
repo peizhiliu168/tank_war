@@ -28,6 +28,8 @@ public:
 
     bool is_touching_wall(const ge211::Rectangle tank, const int);
 
+    void reset();
+
 private:
 
     void b_create();
@@ -36,9 +38,12 @@ private:
     std::vector<ge211::geometry::Rectangle> walls_;
     Geometry geometry_;
 
+    int width_;
+    int height_;
+
     ge211::Dimensions v_wall_dim_;
     ge211::Dimensions h_wall_dim_;
     ge211::Dimensions square_dim_;
-    Virtual_Board virtual_board_;
+    Virtual_board virtual_board_;
 
 };

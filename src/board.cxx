@@ -7,6 +7,8 @@ Board::Board(int width, int height)
         v_wall_dim_ = geometry_.v_wall_dim();
         h_wall_dim_ = geometry_.h_wall_dim();
         square_dim_ = geometry_.square_dim();
+        width_ = width;
+        height_ = height;
         b_create();
     }
 
@@ -68,6 +70,16 @@ bool Board::is_touching(const ge211::Rectangle object, const ge211::Rectangle wa
     return false;
 }
 
+void Board::reset() {
+    Virtual_board new_vboard{width_, height_};
+    virtual_board_ = new_vboard;
+    std::vector<ge211::Rectangle> empty;
+    walls_ = empty;
+    squares_ = empty;
+    b_create();
+}
+
+
 ///////////////////Private////////////////////////
 
 void Board::b_create() {
@@ -125,6 +137,7 @@ void Board::b_create() {
         }
     }
 }
+
 
 
 

@@ -41,9 +41,9 @@ struct Geometry
 
     ge211::Position end;
 
-    ge211::Position first_board_pos;
+    ge211::Position blue_board_pos;
 
-    ge211::Position second_board_pos;
+    ge211::Position red_board_pos;
 
     ge211::Position tank_top_left_red() const noexcept;
     ge211::Position tank_top_left_blue() const noexcept;

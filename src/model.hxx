@@ -30,6 +30,16 @@ struct Model
 
     void ball_blue_reset();
 
+    bool is_game_over();
+
+    int get_winner();
+
+    void move_base();
+
+    bool is_touching(const ge211::Rectangle r1, const ge211::Rectangle r2);
+
+    ge211::Position get_random_square();
+
     ///
     /// MEMBER VARIABLES
     ///
@@ -54,7 +64,9 @@ struct Model
 
     Board board_;
 
-    Player_score first_score_;
-    Player_score second_score_;
+    // Player score object used to keep track of the score of the players
+    Player_score blue_score_;
+    Player_score red_score_;
+
 };
 

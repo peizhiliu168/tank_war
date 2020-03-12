@@ -36,6 +36,20 @@ ge211::Dimensions Ui::initial_window_dimensions() const
 
 void Ui::draw(ge211::Sprite_set& sprites)
 {
+    if (model_.is_game_over()){
+        if (model_.get_winner() == 1){
+            sprites.add_sprite(player_1_win,
+                {(model_.geometry_.scene_dims.width - player_1_win.dimensions().width) / 2,
+                 (model_.geometry_.scene_dims.height-player_1_win.dimensions().height) / 2});
+        } else if (model_.get_winner() == 2){
+            sprites.add_sprite(player_2_win,
+                {(model_.geometry_.scene_dims.width - player_2_win.dimensions().width) / 2,
+                (model_.geometry_.scene_dims.height-player_2_win.dimensions().height) / 2});
+        }
+
+        return;
+    }
+
     // TODO: your code here
     sprites.add_sprite(base_sprite_, model_.base_red_.top_left(), 0);
     sprites.add_sprite(base_sprite_, model_.base_blue_.top_left(), 0);
@@ -56,8 +70,20 @@ void Ui::draw(ge211::Sprite_set& sprites)
     }
 
     // creates score_board
-    sprites.add_sprite(first_score_board, model_.geometry_.first_board_pos);
-    sprites.add_sprite(second_score_board, model_.geometry_.second_board_pos);
+    sprites.add_sprite(first_score_board, model_.geometry_.blue_board_pos, 0);
+    sprites.add_sprite(second_score_board, model_.geometry_.red_board_pos, 0);
+
+    // adds text sprites to score board
+    sprites.add_sprite(player_one, {(model_.geometry_.blue_board_pos.x + (model_.geometry_.score_board_size.width - player_one.dimensions().width) / 2),
+                                    model_.geometry_.blue_board_pos.y}, 1);
+    sprites.add_sprite(player_two, {(model_.geometry_.red_board_pos.x + (model_.geometry_.score_board_size.width - player_two.dimensions().width) / 2),
+                                    model_.geometry_.red_board_pos.y}, 1);
+    first_score.reconfigure(ge211::Text_sprite::Builder(score_font_).message(std::to_string(model_.blue_score_.get_score())));
+    second_score.reconfigure(ge211::Text_sprite::Builder(score_font_).message(std::to_string(model_.red_score_.get_score())));
+    sprites.add_sprite(first_score, {(model_.geometry_.blue_board_pos.x + (model_.geometry_.score_board_size.width - first_score.dimensions().width) / 2),
+                                     model_.geometry_.blue_board_pos.y + first_score.dimensions().height / 2}, 1);
+    sprites.add_sprite(second_score, {(model_.geometry_.red_board_pos.x + (model_.geometry_.score_board_size.width - second_score.dimensions().width) / 2),
+                                      model_.geometry_.red_board_pos.y + second_score.dimensions().height / 2}, 1);
 }
 
 ///
@@ -209,6 +235,7 @@ void Ui::on_key(ge211::Key key)
                 model_.tank_red_.x += 3;
         }
     }
+
     if ( d ) {
         if (model_.tank_red_orientation_ == 4) {
             model_.tank_red_orientation_ = 1;

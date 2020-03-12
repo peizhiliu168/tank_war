@@ -1,7 +1,7 @@
 #include "virtual_board.hxx"
 
 //////////////////////////Public/////////////////////////////////
-Virtual_Board::Virtual_Board(int width, int height) {
+Virtual_board::Virtual_board(int width, int height) {
     for (int i = 0; i < width; i++){
         for (int j = 0; j < height; j++){
             square sq{ge211::Position {i,j},
@@ -15,13 +15,13 @@ Virtual_Board::Virtual_Board(int width, int height) {
     vb_create();
 }
 
-void Virtual_Board::vb_create() {
+void Virtual_board::vb_create() {
     recur_backtrack_();
     remove_duplicate_edges();
     remove_boundary();
 
 }
-square Virtual_Board::get_square_given_pos(ge211::Position pos) const{
+square Virtual_board::get_square_given_pos(ge211::Position pos) const{
     for (int i = 0; i < vb_.size(); i++){
         if (vb_[i].pos == pos){
             return vb_[i];
@@ -30,18 +30,18 @@ square Virtual_Board::get_square_given_pos(ge211::Position pos) const{
     return square{{-1, -1}, {},{}};
 }
 
-int Virtual_Board::height() {
+int Virtual_board::height() {
     return height_;
 }
 
-int Virtual_Board::width() {
+int Virtual_board::width() {
     return width_;
 }
 
 
 
 //////////////////////////Private/////////////////////////////////
-void Virtual_Board::recur_backtrack_() {
+void Virtual_board::recur_backtrack_() {
     std::vector<ge211::Position> pos_stack{{0,0}};
     ge211::Position curr_pos{0, 0};
     while (true){
@@ -92,7 +92,7 @@ void Virtual_Board::recur_backtrack_() {
     }
 }
 
-std::vector<ge211::Position> Virtual_Board::get_unvisited_neighbors_(const ge211::Position pos) {
+std::vector<ge211::Position> Virtual_board::get_unvisited_neighbors_(const ge211::Position pos) {
     int x_pos = pos.x;
     int y_pos = pos.y;
     std::vector<ge211::Position> neighbors{};
@@ -114,7 +114,7 @@ std::vector<ge211::Position> Virtual_Board::get_unvisited_neighbors_(const ge211
     return neighbors;
 }
 
-square* Virtual_Board::get_square_given_pos_(ge211::Position pos) {
+square* Virtual_board::get_square_given_pos_(ge211::Position pos) {
     for (int i = 0; i < vb_.size(); i++){
         if (vb_[i].pos == pos){
             return &(vb_[i]);
@@ -123,7 +123,7 @@ square* Virtual_Board::get_square_given_pos_(ge211::Position pos) {
     return nullptr;
 }
 
-void Virtual_Board::remove_duplicate_edges(){
+void Virtual_board::remove_duplicate_edges(){
     for (int i = 0; i < width_; ++i) {
         for (int j = 0; j < height_; ++j) {
             square* curr_square = get_square_given_pos_({i,j});
@@ -159,7 +159,7 @@ void Virtual_Board::remove_duplicate_edges(){
     }
 }
 
-void Virtual_Board::remove_boundary(){
+void Virtual_board::remove_boundary(){
     for (int i = 0; i < width_; ++i) {
         for (int j = 0; j < height_; ++j) {
             square *curr_square = get_square_given_pos_({i, j});
@@ -177,6 +177,14 @@ void Virtual_Board::remove_boundary(){
             }
         }
     }
+}
+
+Virtual_board& Virtual_board::operator=(const Virtual_board &virtual_board) {
+    this->vb_ = virtual_board.vb_;
+    this->height_ = virtual_board.height_;
+    this->width_ = virtual_board.width_;
+
+    return *this;
 }
 
 

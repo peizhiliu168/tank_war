@@ -13,10 +13,11 @@ Model::Model(Geometry const& geometry)
                                          geometry_.base_dims_))
         , base_blue_(Block::from_top_left(geometry_.base_top_left_blue(),
                                           geometry_.base_dims_))
-        , first_score_()
-        , second_score_()
+        , blue_score_()
+        , red_score_()
         , board_(geometry_.board_size.width, geometry_.board_size.height)
 {
+    move_base();
 }
 ///Launch cannon balls
 void Model::launch_red()
@@ -46,9 +47,12 @@ void Model::update()
             ball_red_reset();
             return;
         }
-        if (b1.hits_block(tank_blue_)||
-            b1.hits_block(base_blue_)){
+        if (b1.hits_block(tank_blue_) ||
+            b1.hits_block(base_blue_) ||
+            is_touching(base_blue_, tank_red_)){
             game_reset();
+            red_score_.plus_one();
+            move_base();
             return;
         }
         ball_red_ = ball_red_.next();
@@ -61,13 +65,17 @@ void Model::update()
             b2.hits_top(geometry_)||
             b2.hits_side(geometry_)||
             board_.destroy_wall(b2)){
+
             ball_blue_.live_ = false;
             ball_blue_reset();
             return;
         }
-        if (b2.hits_block(tank_red_)||
+        if (b2.hits_block(tank_red_) ||
             b2.hits_block(base_red_)){
+
             game_reset();
+            blue_score_.plus_one();
+            move_base();
             return;
         }
         ball_blue_ = ball_blue_.next();
@@ -75,6 +83,29 @@ void Model::update()
         ball_blue_reset();
     }
 
+    if (is_touching(base_red_, tank_blue_)){
+        game_reset();
+        blue_score_.plus_one();
+        move_base();
+    } else if (is_touching(base_blue_, tank_red_)){
+        game_reset();
+        red_score_.plus_one();
+        move_base();
+    }
+}
+
+void Model::move_base(){
+    base_red_.x = get_random_square().x + geometry_.wall_thickness_;
+    base_blue_.x = get_random_square().x + geometry_.wall_thickness_;
+    tank_red_.x = base_red_.x + (base_red_.width - tank_red_.width) / 2;
+    tank_blue_.x = base_blue_.x + (base_red_.width - tank_blue_.width) / 2;
+}
+
+ge211::Position Model::get_random_square(){
+    int ind = std::rand() % (geometry_.board_size.width - 2);
+    int ind_actual = (ind + 1) * geometry_.board_size.height;
+
+    return board_.get_walls()[ind_actual].top_left();
 }
 
 void Model::game_reset() {
@@ -86,6 +117,7 @@ void Model::game_reset() {
         tank_blue_orientation_ = 3;
         ball_red_.live_ = false;
         ball_blue_.live_ = false;
+        board_.reset();
 }
 
 void Model::ball_red_reset() {
@@ -134,3 +166,32 @@ void Model::ball_blue_reset() {
     }
 }
 
+bool Model::is_touching(const ge211::Rectangle r1, const ge211::Rectangle r2) {
+    ge211::Position rect1_tl = r1.top_left();
+    ge211::Position rect1_br = r1.bottom_right();
+    ge211::Position rect2_tl = r2.top_left();
+    ge211::Position wall_br = r2.bottom_right();
+
+    if (rect1_br.x <= rect2_tl.x || rect1_tl.x >= wall_br.x) {
+        return false;
+    }
+    if (rect1_tl.y >= wall_br.y || rect1_br.y <= rect2_tl.y) {
+        return false;
+    }
+    return true;
+}
+
+
+
+bool Model::is_game_over(){
+    return (blue_score_.get_score() + red_score_.get_score()) == 11;
+}
+
+int Model::get_winner(){
+    if (blue_score_.get_score() > red_score_.get_score()){
+        return 1;
+    } else if (blue_score_.get_score() < red_score_.get_score()){
+        return 2;
+    }
+    return 0;
+}
