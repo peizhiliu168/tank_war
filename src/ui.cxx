@@ -133,6 +133,7 @@ void Ui::on_key_up(ge211::Key key) {
     if (key == ge211::Key::code('p'))
         p = false;
 }
+
 void Ui::on_key(ge211::Key key)
 {
 

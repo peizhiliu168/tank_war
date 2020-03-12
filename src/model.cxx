@@ -31,7 +31,7 @@ void Model::launch_blue()
 ///Update cannon balls
 void Model::update()
 {
-    if (ball_red_.hits_ball(ball_blue_)&&ball_red_.live_&&ball_blue_.live_){
+    if (ball_red_.hits_ball(ball_blue_) && ball_red_.live_ && ball_blue_.live_){
         ball_red_.live_ = false;
         ball_blue_.live_ = false;
         ball_blue_reset();
@@ -184,7 +184,8 @@ bool Model::is_touching(const ge211::Rectangle r1, const ge211::Rectangle r2) {
 
 
 bool Model::is_game_over(){
-    return (blue_score_.get_score() + red_score_.get_score()) == 11;
+    return (blue_score_.get_score() + red_score_.get_score())
+            == geometry_.max_rounds;
 }
 
 int Model::get_winner(){

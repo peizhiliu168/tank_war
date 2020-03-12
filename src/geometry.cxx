@@ -2,10 +2,7 @@
 
 // Default constructor for "Geometry"
 Geometry::Geometry() noexcept
-        : top_margin     {  100 }
-        , side_margin    {  170 }
-        , brick_depth    {  300 }
-        , bottom_margin  {   10 }
+        : bottom_margin  {   10 }
         , ball_radius    {    2 }
         , ball_speed     {    4 }
         , ball_red_velocity0 {0, -4}
@@ -17,11 +14,11 @@ Geometry::Geometry() noexcept
         , wall_thickness_ {20}
         , board_size {10, 10}
         , start {board_margin_, board_margin_}
-        , end {scene_dims.width - board_margin_, scene_dims.height - board_margin_ - score_height}
-        , score_height {0}
+        , end {scene_dims.width - board_margin_, scene_dims.height - board_margin_}
         , blue_board_pos {end.x - score_board_size.width, start.y}
         , red_board_pos {start.x, scene_dims.height - score_board_size.height - start.y}
         , score_board_size {75,50}
+        , max_rounds {11}
 { }
 
 ge211::Position Geometry::tank_top_left_red() const noexcept
