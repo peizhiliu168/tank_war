@@ -13,6 +13,7 @@
 
 extern ge211::Color const ball_red_color, ball_blue_color, tank_color, brick_color, base_color;
 
+
 ///
 /// MAIN UI STRUCT
 ///
@@ -26,18 +27,6 @@ struct Ui : ge211::Abstract_game
     // creates a ui using a model object
     explicit Ui(Model&);
 
-    // booleans indicating which keys have been pressed or
-    // is being pressed
-    bool j;
-    bool p;
-    bool w;
-    bool a;
-    bool s;
-    bool d;
-    bool up;
-    bool down;
-    bool left;
-    bool right;
 
     ///
     /// MEMBER FUNCTIONS (for the view)
@@ -63,14 +52,14 @@ struct Ui : ge211::Abstract_game
     // updates the model for every frame
     void on_frame(double dt) override;
 
-    // determines whether two tanks have collided
-    static bool tank_collision(ge211::Rectangle, ge211::Rectangle);
-
     ///
     /// MEMBER VARIABLE (model reference)
     ///
     // houses a model object
     Model& model_;
+
+    // an instance of the Key struct
+    Keys keys_;
 
     ///
     /// MEMBER VARIABLES (for the view)

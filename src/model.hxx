@@ -6,6 +6,21 @@
 #include "player_score.hxx"
 #include "board.hxx"
 
+// struct of booleans indicating which keys have been pressed or
+// is being pressed
+struct Keys{
+    bool j = false;
+    bool p = false;
+    bool w = false;
+    bool a = false;
+    bool s = false;
+    bool d = false;
+    bool up = false;
+    bool down = false;
+    bool left = false;
+    bool right = false;
+};
+
 // The game itself but without the UI. Controls all the
 // logic of how the game is run for each step.
 struct Model
@@ -27,7 +42,7 @@ struct Model
 
     // update the cannon balls depending on if they are live or dead
     // detects any collision of the cannon balls with other objects
-    void update();
+    void update(Keys&);
 
     // resets the positions of the base, tanks, cannonballs, as well as
     // regenerate a new set of walls/maze to restart a new round
@@ -51,6 +66,12 @@ struct Model
 
     // helper function to determine whether two rectangles are overlapping
     bool is_touching(const ge211::Rectangle r1, const ge211::Rectangle r2);
+
+    // determines whether two tanks have collided
+    static bool tank_collision(ge211::Rectangle, ge211::Rectangle);
+
+    // updates the tank's position given certain key pressed
+    void tank_update(Keys&);
 
     // randomly gets the top-left position of a square in the first row of
     // the board
