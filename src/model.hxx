@@ -46,7 +46,7 @@ struct Model
     // compares the scores of the players and determine the winner
     int get_winner();
 
-    // sets the base as well as tanks at the randomly generated position
+    // positions the base as well as tanks at the randomly generated position
     void move_base();
 
     // helper function to determine whether two rectangles are overlapping

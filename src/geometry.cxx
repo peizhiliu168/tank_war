@@ -62,12 +62,12 @@ ge211::Dimensions Geometry::v_wall_dim() const noexcept
 {
     int width = wall_thickness_;
     int height = square_dim().height + 2 * wall_thickness_;
-    return {width, height};
+    return {width, height - 4};
 }
 
 ge211::Dimensions Geometry::h_wall_dim() const noexcept
 {
     int width = square_dim().width + 2 * wall_thickness_;
     int height = wall_thickness_;
-    return {width, height};
+    return {width - 4, height};
 }

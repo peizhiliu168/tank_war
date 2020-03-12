@@ -40,7 +40,10 @@ public:
     // Use this for detecting collision with tank
     bool is_touching(ge211::Rectangle, ge211::Rectangle, const int);
 
-    //
+    // given the orientation of the tank and two rectangles involved in
+    // the collision, determine whether the tank has collided,
+    // also works for general collision between two rectangles if the
+    // ori paramater is set to 0
     bool is_touching_wall(const ge211::Rectangle, const int);
 
     // resets the board by creating a new virtual_board_ and updating walls_

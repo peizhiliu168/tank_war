@@ -101,7 +101,7 @@ void Board::b_create() {
                     ge211::Rectangle wall{};
                     wall.height = h_wall_dim_.height;
                     wall.width = h_wall_dim_.width;
-                    wall.x = square_pos.x - geometry_.wall_thickness_;
+                    wall.x = square_pos.x - geometry_.wall_thickness_ + 2;
                     wall.y = square_pos.y - geometry_.wall_thickness_;
 
                     walls_.push_back(wall);
@@ -111,7 +111,7 @@ void Board::b_create() {
                     wall.height = v_wall_dim_.height;
                     wall.width = v_wall_dim_.width;
                     wall.x = square_pos.x + square_dim_.width;
-                    wall.y = square_pos.y - geometry_.wall_thickness_;
+                    wall.y = square_pos.y - geometry_.wall_thickness_ + 2;
 
                     walls_.push_back(wall);
                 }
@@ -119,7 +119,7 @@ void Board::b_create() {
                     ge211::Rectangle wall{};
                     wall.height = h_wall_dim_.height;
                     wall.width = h_wall_dim_.width;
-                    wall.x = square_pos.x - geometry_.wall_thickness_;
+                    wall.x = square_pos.x - geometry_.wall_thickness_ + 2;
                     wall.y = square_pos.y + square_dim_.height;
 
                     walls_.push_back(wall);
@@ -129,7 +129,7 @@ void Board::b_create() {
                     wall.height = v_wall_dim_.height;
                     wall.width = v_wall_dim_.width;
                     wall.x = square_pos.x - geometry_.wall_thickness_;
-                    wall.y = square_pos.y - geometry_.wall_thickness_;
+                    wall.y = square_pos.y - geometry_.wall_thickness_ + 2 ;
 
                     walls_.push_back(wall);
                 }
