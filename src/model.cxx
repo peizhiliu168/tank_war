@@ -85,11 +85,11 @@ void Model::update(Keys &keys)
     }
 
     if (is_touching(base_red_, tank_blue_)){
-        game_reset();
         blue_score_.plus_one();
-    } else if (is_touching(base_blue_, tank_red_)){
         game_reset();
+    } else if (is_touching(base_blue_, tank_red_)){
         red_score_.plus_one();
+        game_reset();
     }
 }
 
