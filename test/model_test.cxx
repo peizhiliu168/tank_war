@@ -426,3 +426,92 @@ TEST_CASE("cannon ball hits wall")
 
 
 }
+
+TEST_CASE("cannon ball hits another cannon ball")
+{
+    Geometry geometry{};
+    Model model{geometry};
+    Keys keys{};
+
+    model.ball_blue_.center_ = {10, 10};
+    model.ball_red_.center_ = {10, 10};
+
+    model.update(keys);
+    CHECK(model.ball_red_.live_ == false);
+    CHECK(model.ball_blue_.live_ == false);
+    CHECK(model.red_score_.get_score() == 0);
+    CHECK(model.blue_score_.get_score() == 0);
+}
+
+TEST_CASE("tank hits base")
+{
+    Geometry geometry{};
+    Model model{geometry};
+    Keys keys{};
+
+    model.tank_red_.x = model.base_blue_.x;
+    model.tank_red_.y = model.base_blue_.y;
+    model.tank_blue_.top_left() = {200, 200};
+    model.update(keys);
+    CHECK(model.red_score_.get_score() == 1);
+    CHECK(model.blue_score_.get_score() == 0);
+}
+
+TEST_CASE("tank hits wall with ball attached")
+{
+    Geometry geometry{};
+    Model model{geometry};
+    Keys keys{};
+
+
+    std::vector<ge211::Rectangle> walls = model.board_.get_walls();
+    ge211::Rectangle wall = walls[0];
+    model.tank_red_.x = wall.x;
+    model.tank_red_.y = wall.y;
+
+    model.update(keys);
+    CHECK(model.ball_red_.live_ == false);
+    CHECK(model.tank_red_.x == wall.x);
+    CHECK(model.tank_red_.y == wall.y);
+}
+
+TEST_CASE("tank hits tank with both cannon balls attached")
+{
+    Geometry geometry{};
+    Model model{geometry};
+    Keys keys{};
+
+    model.tank_red_.top_left() = {100, 100};
+    model.tank_blue_.top_left() = {100, 100};
+
+    model.update(keys);
+    CHECK(model.red_score_.get_score() == 0);
+    CHECK(model.blue_score_.get_score() == 0);
+    CHECK(model.tank_red_.x == model.base_red_.x + (model.base_red_.width - model.tank_red_.width) / 2);
+    CHECK(model.tank_blue_.x == model.base_blue_.x + (model.base_blue_.width - model.tank_blue_.width) / 2);
+}
+
+TEST_CASE("tank hits edge of screen")
+{
+    Geometry geometry{};
+    Model model{geometry};
+    Keys keys{};
+
+    model.tank_red_.x = 0;
+    model.tank_red_.y = 0;
+    keys.w = true;
+
+    model.update(keys);
+    CHECK(model.tank_red_.x == 0);
+    CHECK(model.tank_red_.y == 0);
+}
+
+TEST_CASE("game ends after 11 rounds")
+{
+    Geometry geometry{};
+    Model model{geometry};
+    for (int i = 0; i < 11; i++){
+        model.red_score_.plus_one();
+    }
+    CHECK(model.get_winner() == 2);
+}
