@@ -1,10 +1,10 @@
 #include "virtual_board.hxx"
 
 //////////////////////////Public/////////////////////////////////
-Virtual_board::Virtual_board(int width, int height) {
+Virtual_board::Virtual_board(int width, int height, int seed) {
     for (int i = 0; i < width; i++){
         for (int j = 0; j < height; j++){
-            square sq{ge211::Position {i,j},
+            square sq{ge211::Position {i, j},
                       std::vector<bool>{true, true, true, true},
                       false};
             vb_.push_back(sq);
@@ -12,10 +12,12 @@ Virtual_board::Virtual_board(int width, int height) {
     }
     width_ = width;
     height_ = height;
+    std::srand(seed);
     vb_create();
 }
 
 void Virtual_board::vb_create() {
+
     recur_backtrack_();
     remove_duplicate_edges();
     remove_boundary();

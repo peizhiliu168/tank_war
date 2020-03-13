@@ -2,7 +2,7 @@
 
 ///////////////////Public////////////////////////
 Board::Board(int width, int height)
-    : virtual_board_(width, height)
+    : virtual_board_(width, height, 1)
     {
         v_wall_dim_ = geometry_.v_wall_dim();
         h_wall_dim_ = geometry_.h_wall_dim();
@@ -71,7 +71,8 @@ bool Board::is_touching(const ge211::Rectangle object, const ge211::Rectangle wa
 }
 
 void Board::reset() {
-    Virtual_board new_vboard{width_, height_};
+    int seed = std::rand() % 100000;
+    Virtual_board new_vboard{width_, height_, seed};
     virtual_board_ = new_vboard;
     std::vector<ge211::Rectangle> empty;
     walls_ = empty;

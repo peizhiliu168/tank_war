@@ -34,6 +34,9 @@ struct Geometry
     // maximum sum of rounds in the game
     int max_rounds;
 
+    // velocity of the tanks
+    int tank_vel;
+
     // dimension of the scene
     ge211::Dimensions scene_dims;
 

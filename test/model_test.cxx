@@ -1,140 +1,428 @@
 #include "model.hxx"
 #include <catch.hxx>
 
-TEST_CASE("play the game")
+TEST_CASE("both tanks move")
 {
-    Geometry geometry;
-    Model m(geometry);
-    CHECK( m.bricks_.size() == 100 );
+    Geometry geometry{};
+    Model model {geometry};
+    Keys keys{};
 
-    m.ball_.live_ = true;
-    Ball old_ball = m.ball_;
+    int init_b_x = model.tank_blue_.x;
+    int init_b_y = model.tank_blue_.y;
+    int init_r_x = model.tank_red_.x;
+    int init_r_y = model.tank_red_.y;
 
-    m.update(0);
-    CHECK( m.ball_.center_ == old_ball.center_ + old_ball.velocity_ );
+    // testing red tank
+    keys.w = true;
+    model.update(keys);
 
-    m.update(0);
-    CHECK( m.ball_.center_ == old_ball.center_ + 2 * old_ball.velocity_ );
+    CHECK(model.tank_red_.x == init_r_x);
+    CHECK(model.tank_red_.y == init_r_y - geometry.tank_vel);
 
-    m.update(0);
-    CHECK( m.ball_.center_ == old_ball.center_ + 3 * old_ball.velocity_ );
+    keys.d = true;
+    model.update(keys);
+
+    CHECK(model.tank_red_.x == init_r_x + geometry.tank_vel);
+    CHECK(model.tank_red_.y == init_r_y - geometry.tank_vel);
+
+    keys.d = false;
+    keys.a = true;
+    model.update(keys);
+
+    CHECK(model.tank_red_.x == init_r_x + geometry.tank_vel);
+    CHECK(model.tank_red_.y == init_r_y - 2 * geometry.tank_vel);
+
+    keys.d = false;
+    keys.a = false;
+    keys.w = false;
+    keys.s = true;
+    model.update(keys);
+
+    CHECK(model.tank_red_.x == init_r_x + geometry.tank_vel);
+    CHECK(model.tank_red_.y == init_r_y - geometry.tank_vel);
+
+
+
+    // testing blue tank
+    keys.up = true;
+    model.update(keys);
+
+    CHECK(model.tank_blue_.x == init_b_x);
+    CHECK(model.tank_blue_.y == init_b_y + geometry.tank_vel);
+
+    keys.right = true;
+    model.update(keys);
+
+    CHECK(model.tank_blue_.x == init_b_x - geometry.tank_vel);
+    CHECK(model.tank_blue_.y == init_b_y + geometry.tank_vel);
+
+    keys.right = false;
+    keys.left = true;
+    model.update(keys);
+
+    CHECK(model.tank_blue_.x == init_b_x - geometry.tank_vel);
+    CHECK(model.tank_blue_.y == init_b_y + 2 * geometry.tank_vel);
+
+    keys.right = false;
+    keys.left = false;
+    keys.up = false;
+    keys.down = true;
+    model.update(keys);
+
+    CHECK(model.tank_blue_.x == init_b_x - geometry.tank_vel);
+    CHECK(model.tank_blue_.y == init_b_y + geometry.tank_vel);
 }
-TEST_CASE("destroy one brick")
+
+TEST_CASE("both tanks move at same time") {
+    Geometry geometry{};
+    Model model{geometry};
+    Keys keys{};
+
+    int init_b_x = model.tank_blue_.x;
+    int init_b_y = model.tank_blue_.y;
+    int init_r_x = model.tank_red_.x;
+    int init_r_y = model.tank_red_.y;
+
+    keys.w = true;
+    keys.up = true;
+    model.update(keys);
+
+    CHECK(model.tank_blue_.x == init_b_x);
+    CHECK(model.tank_blue_.y == init_b_y + geometry.tank_vel);
+    CHECK(model.tank_red_.x == init_r_x);
+    CHECK(model.tank_red_.y == init_r_y - geometry.tank_vel);
+
+    keys.d = true;
+    keys.right = true;
+    model.update(keys);
+
+    CHECK(model.tank_blue_.x == init_b_x - geometry.tank_vel);
+    CHECK(model.tank_blue_.y == init_b_y + geometry.tank_vel);
+    CHECK(model.tank_red_.x == init_r_x + geometry.tank_vel);
+    CHECK(model.tank_red_.y == init_r_y - geometry.tank_vel);
+
+    keys.d = false;
+    keys.a = true;
+    keys.right = false;
+    keys.left = true;
+    model.update(keys);
+
+    CHECK(model.tank_blue_.x == init_b_x - geometry.tank_vel);
+    CHECK(model.tank_blue_.y == init_b_y + 2 * geometry.tank_vel);
+    CHECK(model.tank_red_.x == init_r_x + geometry.tank_vel);
+    CHECK(model.tank_red_.y == init_r_y - 2 * geometry.tank_vel);
+
+    keys.d = false;
+    keys.a = false;
+    keys.w = false;
+    keys.s = true;
+    keys.right = false;
+    keys.left = false;
+    keys.up = false;
+    keys.down = true;
+    model.update(keys);
+
+    CHECK(model.tank_blue_.x == init_b_x - geometry.tank_vel);
+    CHECK(model.tank_blue_.y == init_b_y + geometry.tank_vel);
+    CHECK(model.tank_red_.x == init_r_x + geometry.tank_vel);
+    CHECK(model.tank_red_.y == init_r_y - geometry.tank_vel);
+}
+
+TEST_CASE("cannonballs follow tank")
 {
-    Geometry geometry;
-    Model m(geometry);
-    m.bricks_.clear();
-    m.bricks_.push_back({250, 200, 100, 20});
-    m.ball_.live_ = true;
-    m.ball_.center_ = {300, 400};
-    m.ball_.velocity_ = {0, -50};
+    Geometry geometry{};
+    Model model{geometry};
+    Keys keys{};
 
-    Ball ball(m.ball_);
+    int red_cannon_ball_x = model.ball_red_.top_left().x;
+    int red_cannon_ball_y = model.ball_red_.top_left().y;
+    int blue_cannon_ball_x = model.ball_blue_.top_left().x;
+    int blue_cannon_ball_y = model.ball_blue_.top_left().y;
 
-    m.update(0);
-    ball = ball.next();
-    CHECK( m.ball_ == ball );
+    keys.w = true;
+    model.update(keys);
 
-    m.update(0);
-    ball = ball.next();
-    CHECK( m.ball_ == ball );
+    CHECK(model.ball_red_.top_left().x == red_cannon_ball_x);
+    CHECK(model.ball_red_.top_left().y == red_cannon_ball_y - geometry.tank_vel);
 
-    m.update(0);
-    ball = ball.next();
-    CHECK( m.ball_ == ball );
-    CHECK( m.ball_.center_.y == ball.center_.y );
-    CHECK( m.bricks_.size() == 1 );
+    keys.w = false;
+    keys.s = true;
+    model.update(keys);
 
-    m.update(0);
-    ball.velocity_ *= -1;
-    ball = ball.next();
-    CHECK( m.ball_ == ball );
-    CHECK( m.ball_.center_.x == ball.center_.x );
-    CHECK( m.ball_.center_.y == ball.center_.y );
-    CHECK( m.ball_.velocity_.width == ball.velocity_.width );
-    CHECK( m.ball_.velocity_.height == ball.velocity_.height );
-    CHECK( m.bricks_.empty() );
+    CHECK(model.ball_red_.top_left().x == red_cannon_ball_x);
+    CHECK(model.ball_red_.top_left().y == red_cannon_ball_y);
+
+    keys.up = true;
+    model.update(keys);
+
+    CHECK(model.ball_blue_.top_left().x == blue_cannon_ball_x);
+    CHECK(model.ball_blue_.top_left().y == blue_cannon_ball_y + geometry.tank_vel);
+
+    keys.up = false;
+    keys.down = true;
+    model.update(keys);
+
+    CHECK(model.ball_blue_.top_left().x == blue_cannon_ball_x);
+    CHECK(model.ball_blue_.top_left().y == blue_cannon_ball_y);
 }
-TEST_CASE("ball follow paddle"){
-    Geometry geometry;
-    Model m(geometry);
-    m.bricks_.clear();
-    m.ball_.live_ = false;
-    m.ball_.radius_ = 3;
-    m.ball_.center_ = {450, 546};
-    m.ball_.velocity_ = {2, -20};
-    m.paddle_to(245);
-    CHECK( m.ball_.center_.x == 295);
-    CHECK( m.ball_.center_.y == 546);
-}
-TEST_CASE("gsc update mock"){
-    Geometry geometry;
-    geometry.scene_dims = {800, 600};
-    geometry.ball_velocity0 = {2,-20};
-    Model m(geometry);
-    m.bricks_.clear();
-    m.paddle_to(0);
-    m.ball_.live_ = true;
-    m.ball_.center_ = {400, 589};
-    m.ball_.velocity_ = {2, 19};
-    m.ball_.radius_ = 3;
-    m.update(12);
-    CHECK( m.ball_.velocity_.height == -20);
-    CHECK( m.ball_.center_.x == 50);
-    //CHECK( m.ball_.center_.y == 546);
-    CHECK( m.ball_.live_ == false);
-}
-TEST_CASE("update: hitting side and top at the same time"){
-    Geometry geometry;
-    Model m(geometry);
-    m.ball_.center_ = {0, 0};
-    m.ball_.live_ = true;
-    m.update(1);
-    CHECK( m.ball_.velocity_.width == -3);
-    CHECK( m.ball_.velocity_.height == 10);
-}
-TEST_CASE("update: hit top"){
-    Geometry geometry;
-    Model m(geometry);
-    m.ball_.center_ = {100, 0};
-    m.ball_.live_ = true;
-    m.update(1);
-    CHECK( m.ball_.velocity_.width == 3);
-    CHECK( m.ball_.velocity_.height == 10);
-}
-TEST_CASE("update: hit side"){
-    Geometry geometry;
-    Model m(geometry);
-    m.ball_.center_ = {0, 100};
-    m.ball_.live_ = true;
-    m.update(1);
-    CHECK( m.ball_.velocity_.width == -3);
-    CHECK( m.ball_.velocity_.height == -10);
-}
-TEST_CASE("update: hit bottom"){
-    Geometry geometry;
-    Model m(geometry);
-    m.ball_.center_ = {200, 800};
-    m.ball_.live_ = true;
-    m.update(1);
-    CHECK( m.ball_.live_ == false);
-}
-TEST_CASE("update: destroy brick"){
-    Geometry geometry;
-    Model m(geometry);
-    m.ball_.center_ = {geometry.side_margin-3, geometry.top_margin+10};
-    m.ball_.live_ = true;
-    m.update(1);
-    CHECK( m.ball_.velocity_.width == -3);
-    CHECK( m.ball_.velocity_.height == 10);
-}
-TEST_CASE("hits paddle")
+
+TEST_CASE("fire cannon ball")
 {
-    Geometry geometry;
-    Model m(geometry);
-    m.ball_.live_ = true;
-    m.ball_.velocity_.height = 10;
-    m.update(10);
-    CHECK( m.ball_.velocity_.height == -10);
-    CHECK( m.ball_.velocity_.width == 13);
+    Geometry geometry{};
+    Model model{geometry};
+    Keys keys{};
+
+    int red_cannon_ball_x = model.ball_red_.top_left().x;
+    int red_cannon_ball_y = model.ball_red_.top_left().y;
+    int blue_cannon_ball_x = model.ball_blue_.top_left().x;
+    int blue_cannon_ball_y = model.ball_blue_.top_left().y;
+
+    model.launch_blue();
+    model.launch_red();
+    model.update(keys);
+    CHECK(model.ball_red_.top_left().x  == red_cannon_ball_x);
+    CHECK(model.ball_red_.top_left().y == red_cannon_ball_y
+                                          + model.ball_red_.velocity_.height);
+    CHECK(model.ball_blue_.top_left().x  == blue_cannon_ball_x);
+    CHECK(model.ball_blue_.top_left().y == blue_cannon_ball_y
+                                           + model.ball_blue_.velocity_.height);
+
+}
+
+TEST_CASE("rotate before firing cannon ball")
+{
+    Geometry geometry{};
+    Model model{geometry};
+    Keys keys{};
+
+    keys.d = true;
+    keys.right = true;
+    model.update(keys);
+
+    int red_cannon_ball_x = model.ball_red_.top_left().x;
+    int red_cannon_ball_y = model.ball_red_.top_left().y;
+    int blue_cannon_ball_x = model.ball_blue_.top_left().x;
+    int blue_cannon_ball_y = model.ball_blue_.top_left().y;
+
+    model.launch_blue();
+    model.launch_red();
+    model.update(keys);
+    CHECK(model.ball_red_.top_left().x  == red_cannon_ball_x
+                                           + model.ball_red_.velocity_.width);
+    CHECK(model.ball_red_.top_left().y == red_cannon_ball_y);
+    CHECK(model.ball_blue_.top_left().x  == blue_cannon_ball_x
+                                            + model.ball_blue_.velocity_.width);
+    CHECK(model.ball_blue_.top_left().y == blue_cannon_ball_y);
+}
+
+TEST_CASE("red cannon hits blue tank")
+{
+    Geometry geometry{};
+    Model model{geometry};
+    Keys keys{};
+
+    ge211::Position ball_init = model.ball_red_.top_left();
+    model.launch_red();
+
+    model.tank_blue_.x = 100;
+    model.tank_blue_.y = 100;
+
+    model.ball_red_.velocity_ = ge211::Dimensions {4, 0};
+    model.ball_red_.center_ = ge211::Position {96, 100};
+
+    model.update(keys);
+    CHECK(model.ball_red_.live_ == false);
+    CHECK(model.red_score_.get_score() == 1);
+    CHECK(model.blue_score_.get_score() == 0);
+}
+
+TEST_CASE("blue cannon hits red tank")
+{
+    Geometry geometry{};
+    Model model{geometry};
+    Keys keys{};
+
+    model.launch_blue();
+
+    model.tank_red_.x = 100;
+    model.tank_red_.y = 100;
+
+    model.ball_blue_.velocity_ = ge211::Dimensions {4, 0};
+    model.ball_blue_.center_ = ge211::Position {96, 100};
+
+    model.update(keys);
+    CHECK(model.ball_blue_.live_ == false);
+    CHECK(model.blue_score_.get_score() == 1);
+    CHECK(model.red_score_.get_score() == 0);
+}
+
+TEST_CASE("both hit tanks")
+{
+    Geometry geometry{};
+    Model model{geometry};
+    Keys keys{};
+
+    model.launch_blue();
+    model.launch_red();
+
+    model.tank_red_.x = 100;
+    model.tank_red_.y = 100;
+    model.tank_blue_.x = 100;
+    model.tank_blue_.y = 100;
+
+    model.ball_blue_.velocity_ = ge211::Dimensions {4, 0};
+    model.ball_blue_.center_ = ge211::Position {96, 100};
+
+    model.ball_red_.velocity_ = ge211::Dimensions {-4, 0};
+    model.ball_red_.center_ = ge211::Position {104, 100};
+
+    model.update(keys);
+    CHECK(model.ball_blue_.live_ == false);
+    CHECK(model.ball_red_.live_ == false);
+    CHECK(model.red_score_.get_score() == 1);
+    CHECK(model.blue_score_.get_score() == 0);
+}
+
+TEST_CASE("cannon ball hits edge of screen"){
+    Geometry geometry{};
+    Model model{geometry};
+    Keys keys{};
+
+    ge211::Position blue_init = model.ball_blue_.top_left();
+    ge211::Position red_init = model.ball_red_.top_left();
+
+    model.launch_blue();
+    model.ball_blue_.velocity_ = ge211::Dimensions {4, 0};
+    model.ball_blue_.center_ = ge211::Position
+            {geometry.scene_dims.width - 4, 100};
+    model.update(keys);
+    CHECK(blue_init == model.ball_blue_.top_left());
+    CHECK(model.ball_blue_.live_ == false);
+
+    model.launch_blue();
+    model.ball_blue_.velocity_ = ge211::Dimensions {-4, 0};
+    model.ball_blue_.center_ = ge211::Position
+            {4, 100};
+    model.update(keys);
+    CHECK(blue_init == model.ball_blue_.top_left());
+    CHECK(model.ball_blue_.live_ == false);
+
+    model.launch_blue();
+    model.ball_blue_.velocity_ = ge211::Dimensions {0, 4};
+    model.ball_blue_.center_ = ge211::Position
+            {100, geometry.scene_dims.height - 4};
+    model.update(keys);
+    CHECK(blue_init == model.ball_blue_.top_left());
+    CHECK(model.ball_blue_.live_ == false);
+
+    model.launch_blue();
+    model.ball_blue_.velocity_ = ge211::Dimensions {0, -4};
+    model.ball_blue_.center_ = ge211::Position
+            {100, 4};
+    model.update(keys);
+    CHECK(blue_init == model.ball_blue_.top_left());
+    CHECK(model.ball_blue_.live_ == false);
+
+    model.launch_red();
+    model.ball_red_.velocity_ = ge211::Dimensions {4, 0};
+    model.ball_red_.center_ = ge211::Position
+            {geometry.scene_dims.width - 4, 100};
+    model.update(keys);
+    CHECK(red_init == model.ball_red_.top_left());
+    CHECK(model.ball_red_.live_ == false);
+
+    model.launch_red();
+    model.ball_red_.velocity_ = ge211::Dimensions {-4, 0};
+    model.ball_red_.center_ = ge211::Position
+            {4, 100};
+    model.update(keys);
+    CHECK(red_init == model.ball_red_.top_left());
+    CHECK(model.ball_red_.live_ == false);
+
+    model.launch_red();
+    model.ball_red_.velocity_ = ge211::Dimensions {0, 4};
+    model.ball_red_.center_ = ge211::Position
+            {100, geometry.scene_dims.height - 4};
+    model.update(keys);
+    CHECK(red_init == model.ball_red_.top_left());
+    CHECK(model.ball_red_.live_ == false);
+
+    model.launch_red();
+    model.ball_red_.velocity_ = ge211::Dimensions {0, -4};
+    model.ball_red_.center_ = ge211::Position
+            {100, 4};
+    model.update(keys);
+    CHECK(red_init == model.ball_red_.top_left());
+    CHECK(model.ball_red_.live_ == false);
+}
+
+TEST_CASE("cannon ball hits base")
+{
+    Geometry geometry{};
+    Model model{geometry};
+    Keys keys{};
+
+    model.launch_blue();
+
+    model.ball_blue_.velocity_ = ge211::Dimensions {-4, 0};
+    model.ball_blue_.center_ = ge211::Position
+            {model.base_red_.x + model.base_red_.width + 4, model.base_red_.y};
+
+    model.update(keys);
+    CHECK(model.ball_blue_.live_ == false);
+    CHECK(model.blue_score_.get_score() == 1);
+    CHECK(model.red_score_.get_score() == 0);
+
+    model.launch_red();
+
+    model.ball_red_.velocity_ = ge211::Dimensions {-4, 0};
+    model.ball_red_.center_ = ge211::Position
+            {model.base_blue_.x + model.base_blue_.width + 4,
+             model.base_blue_.y + model.base_blue_.height};
+
+    model.update(keys);
+    CHECK(model.ball_red_.live_ == false);
+    CHECK(model.blue_score_.get_score() == 1);
+    CHECK(model.red_score_.get_score() == 1);
+}
+
+TEST_CASE("cannon ball hits wall")
+{
+    Geometry geometry{};
+    Model model{geometry};
+    Keys keys{};
+
+    ge211::Position blue_init = model.ball_blue_.top_left();
+    ge211::Position red_init = model.ball_red_.top_left();
+
+    std::vector<ge211::Rectangle> walls = model.board_.get_walls();
+    int wall_init = walls.size();
+
+    ge211::Rectangle wall = walls[0];
+    model.launch_red();
+    model.ball_red_.velocity_ = ge211::Dimensions {0, 0};
+    model.ball_red_.center_ = ge211::Position {wall.x + model.ball_red_.radius_,
+                                               wall.y + model.ball_red_.radius_};
+    model.update(keys);
+    CHECK(model.ball_red_.live_ == false);
+    CHECK(model.ball_red_.top_left() == red_init);
+    CHECK(model.board_.get_walls()[0] != walls[0]);
+    CHECK(model.board_.get_walls().size() == wall_init - 1);
+
+
+    walls = model.board_.get_walls();
+    wall_init = walls.size();
+    wall = walls[0];
+
+    model.launch_blue();
+    model.ball_blue_.velocity_ = ge211::Dimensions {0, 0};
+    model.ball_blue_.center_ = ge211::Position {wall.x + model.ball_blue_.radius_,
+                                               wall.y + model.ball_blue_.radius_};
+    model.update(keys);
+    CHECK(model.ball_blue_.live_ == false);
+    CHECK(model.ball_blue_.top_left() == blue_init);
+    CHECK(model.board_.get_walls()[0] != walls[0]);
+    CHECK(model.board_.get_walls().size() == wall_init - 1);
+
+
 }

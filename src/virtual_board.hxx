@@ -32,8 +32,9 @@ public:
     ///
     /// CONSTRUCTOR
     ///
-    // constructor, takes in width and height of the virtual board
-    explicit Virtual_board(int, int);
+    // constructor, takes in width, height, and a
+    // random seed to create virtual board
+    explicit Virtual_board(int, int, int);
 
     ///
     /// PUBLIC MEMBER FUNCTIONS
@@ -87,7 +88,7 @@ private:
     // virtual representation of the board
     std::vector<square> vb_;
 
-    // width and height of the virtual board
+    // width, height, and seed of the virtual board
     int width_;
     int height_;
 };

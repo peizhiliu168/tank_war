@@ -14,7 +14,7 @@ public:
     ///
     /// CONSTRUCTOR
     ///
-    // constructs the actual board with dimensions in px from
+    // constructs the actual board with dimensions in px and seed from
     // the virtual board as well as initialize member variables
     explicit Board(int, int);
 

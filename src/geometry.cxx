@@ -19,6 +19,7 @@ Geometry::Geometry() noexcept
         , red_board_pos {start.x, scene_dims.height - score_board_size.height - start.y}
         , score_board_size {75,50}
         , max_rounds {11}
+        , tank_vel {1}
 { }
 
 ge211::Position Geometry::tank_top_left_red() const noexcept

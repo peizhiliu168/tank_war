@@ -4,5 +4,4 @@
 TEST_CASE("create virtual board")
 {
     Board b_board{5,5};
-
 }
