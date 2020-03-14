@@ -16,11 +16,6 @@ add_program(tank_war
         ${MODEL_COMMON})
 target_link_libraries(tank_war ge211)
 
-add_test_program(ball_test
-        test/ball_test.cxx
-        ${MODEL_COMMON})
-target_link_libraries(ball_test ge211)
-
 add_test_program(virtual_board_test
         test/virtual_board_test.cxx
         ${MODEL_COMMON})

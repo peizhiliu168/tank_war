@@ -279,8 +279,44 @@ TEST_CASE("both hit tanks")
     model.update(keys);
     CHECK(model.ball_blue_.live_ == false);
     CHECK(model.ball_red_.live_ == false);
-    CHECK(model.red_score_.get_score() == 1);
+    CHECK(model.red_score_.get_score() == 0);
     CHECK(model.blue_score_.get_score() == 0);
+    CHECK(model.tank_red_.y != model.tank_blue_.y);
+}
+
+TEST_CASE("dead cannon ball hits wall"){
+    Geometry geometry{};
+    Model model{geometry};
+    Keys keys{};
+
+    ge211::Position blue_init = model.ball_blue_.top_left();
+    ge211::Position red_init = model.ball_red_.top_left();
+
+    std::vector<ge211::Rectangle> walls = model.board_.get_walls();
+    int wall_init = walls.size();
+
+    ge211::Rectangle wall = walls[0];
+    model.ball_red_.velocity_ = ge211::Dimensions {0, 0};
+    model.ball_red_.center_ = ge211::Position {wall.x + model.ball_red_.radius_,
+                                               wall.y + model.ball_red_.radius_};
+    model.update(keys);
+    CHECK(model.ball_red_.live_ == false);
+    CHECK(model.ball_red_.top_left() == red_init);
+    CHECK(model.board_.get_walls()[0] == walls[0]);
+    CHECK(model.board_.get_walls().size() == wall_init);
+
+    walls = model.board_.get_walls();
+    wall_init = walls.size();
+    wall = walls[0];
+
+    model.ball_blue_.velocity_ = ge211::Dimensions {0, 0};
+    model.ball_blue_.center_ = ge211::Position {wall.x + model.ball_blue_.radius_,
+                                                wall.y + model.ball_blue_.radius_};
+    model.update(keys);
+    CHECK(model.ball_blue_.live_ == false);
+    CHECK(model.ball_blue_.top_left() == blue_init);
+    CHECK(model.board_.get_walls()[0] == walls[0]);
+    CHECK(model.board_.get_walls().size() == wall_init);
 }
 
 TEST_CASE("cannon ball hits edge of screen"){
@@ -386,6 +422,33 @@ TEST_CASE("cannon ball hits base")
     CHECK(model.red_score_.get_score() == 1);
 }
 
+TEST_CASE("cannon ball hits base at same time")
+{
+    Geometry geometry{};
+    Model model{geometry};
+    Keys keys{};
+
+    model.launch_blue();
+
+    model.ball_blue_.velocity_ = ge211::Dimensions {-4, 0};
+    model.ball_blue_.center_ = ge211::Position
+            {model.base_red_.x + model.base_red_.width + 4, model.base_red_.y};
+
+    model.launch_red();
+
+    model.ball_red_.velocity_ = ge211::Dimensions {-4, 0};
+    model.ball_red_.center_ = ge211::Position
+            {model.base_blue_.x + model.base_blue_.width + 4,
+             model.base_blue_.y + model.base_blue_.height};
+
+    model.update(keys);
+
+    CHECK(model.ball_red_.live_ == false);
+    CHECK(model.ball_blue_.live_ == false);
+    CHECK(model.blue_score_.get_score() == 0);
+    CHECK(model.red_score_.get_score() == 0);
+}
+
 TEST_CASE("cannon ball hits wall")
 {
     Geometry geometry{};
@@ -457,6 +520,26 @@ TEST_CASE("tank hits base")
     CHECK(model.blue_score_.get_score() == 0);
 }
 
+TEST_CASE("tank hits base at same time")
+{
+    Geometry geometry{};
+    Model model{geometry};
+    Keys keys{};
+
+    model.tank_red_.x = model.base_blue_.x;
+    model.tank_red_.y = model.base_blue_.y;
+    model.tank_blue_.x = model.base_red_.x;
+    model.tank_blue_.y = model.base_red_.y;
+
+    model.update(keys);
+    CHECK(model.red_score_.get_score() == 0);
+    CHECK(model.blue_score_.get_score() == 0);
+    CHECK(model.tank_red_.x != model.base_blue_.x);
+    CHECK(model.tank_red_.y != model.base_blue_.y);
+    CHECK(model.tank_blue_.x != model.base_red_.x);
+    CHECK(model.tank_blue_.y != model.base_red_.y);
+}
+
 TEST_CASE("tank hits wall with ball attached")
 {
     Geometry geometry{};
@@ -506,12 +589,13 @@ TEST_CASE("tank hits edge of screen")
     CHECK(model.tank_red_.y == 0);
 }
 
-TEST_CASE("game ends after 11 rounds")
+TEST_CASE("game ends after non-tie 11 rounds")
 {
     Geometry geometry{};
     Model model{geometry};
     for (int i = 0; i < 11; i++){
         model.red_score_.plus_one();
     }
+    CHECK(model.is_game_over() == true);
     CHECK(model.get_winner() == 2);
 }

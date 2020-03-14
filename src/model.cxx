@@ -42,6 +42,14 @@ void Model::update(Keys &keys)
         ball_red_reset();
     }
     Ball b1(ball_red_.next());
+    Ball b2(ball_blue_.next());
+    if(ball_blue_.live_ && ball_red_.live_){
+        if ((b1.hits_block(tank_blue_) && b2.hits_block(tank_red_)) ||
+            b1.hits_block(base_blue_) && b2.hits_block(base_red_)){
+            game_reset();
+            return;
+        }
+    }
     if (ball_red_.live_){
         if (b1.hits_bottom(geometry_)||
             b1.hits_top(geometry_)||
@@ -61,7 +69,7 @@ void Model::update(Keys &keys)
     } else{
         ball_red_reset();
     }
-    Ball b2(ball_blue_.next());
+
     if (ball_blue_.live_){
         if (b2.hits_bottom(geometry_)||
             b2.hits_top(geometry_)||
@@ -84,7 +92,10 @@ void Model::update(Keys &keys)
         ball_blue_reset();
     }
 
-    if (is_touching(base_red_, tank_blue_)){
+    if (is_touching(base_red_, tank_blue_) &&
+        is_touching(base_blue_, tank_red_)){
+        game_reset();
+    } else if (is_touching(base_red_, tank_blue_)){
         blue_score_.plus_one();
         game_reset();
     } else if (is_touching(base_blue_, tank_red_)){
@@ -116,10 +127,10 @@ void Model::game_reset() {
         tank_blue_orientation_ = 3;
         ball_red_.live_ = false;
         ball_blue_.live_ = false;
+        board_.reset();
         move_base();
         ball_red_reset();
         ball_blue_reset();
-        board_.reset();
 }
 
 void Model::ball_red_reset() {
