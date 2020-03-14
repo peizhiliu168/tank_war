@@ -45,7 +45,7 @@ void Model::update(Keys &keys)
     Ball b2(ball_blue_.next());
     if(ball_blue_.live_ && ball_red_.live_){
         if ((b1.hits_block(tank_blue_) && b2.hits_block(tank_red_)) ||
-            b1.hits_block(base_blue_) && b2.hits_block(base_red_)){
+            (b1.hits_block(base_blue_) && b2.hits_block(base_red_))){
             game_reset();
             return;
         }
