@@ -1,5 +1,7 @@
 # Tank War
 
+<img src="images/image1.PNG" width="300"> <img src="images/image2.PNG" width="300"> <img src="images/win.PNG" width="300"> 
+
 ## Description
 Tank War is a game where two player-controlled tanks battle each other in a fully destructible maze generated via the Recursive Backtracking algorithm. This game was the final project in CS 211 at Northwestern Winter 2020 and as a result, uses a custom game engine GE 211. Further information regarding the controls, tests, and functional requirements can be found in the Evaluation Guide found on the GitHub page.
 
